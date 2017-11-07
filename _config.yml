@@ -5,7 +5,7 @@
 # Site
 title: whip1ash
 subtitle: whip1ash
-description:
+description: whip1ash
 author: whip1ash
 language: zh-CN
 timezone: Asia/Shanghai
@@ -63,7 +63,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: hacker
+theme: next 
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -71,3 +71,6 @@ deploy:
   type: git
   repo: https://github.com/whip1ash/whip1ash.github.io.git
   branch: master
+
+repository: whip1ash/whip1ash.github.io.git
+github: [metadata]
