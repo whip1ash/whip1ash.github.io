@@ -6,8 +6,7 @@ html {
 
 body {
   color: rgba(0, 0, 0, 0.5);
-  font-family: 'Pacifico','PingHei', 'PingFang SC', Helvetica Neue, 'Work Sans', 'Hiragino Sans GB', 'Microsoft YaHei',  SimSun, sans-serif;
-  /*font-family: 'Pacifico', Helvetica Neue, Helvetica, PingFang SC, Lantinghei SC, Hiragino Sans GB, Microsoft YaHei, \\5FAE\8F6F\96C5\9ED1, STHeitiSC-Light, simsun, WenQuanYi Zen Hei, WenQuanYi Micro Hei, Arial, sans-serif*/
+  font-family: 'PingHei', 'PingFang SC', Helvetica Neue, 'Work Sans', 'Hiragino Sans GB', 'Microsoft YaHei', SimSun, sans-serif;
   font-size: 15px;
   width: 100%;
   margin: 0 auto 30px auto;
@@ -112,12 +111,12 @@ a:hover, a:active {
 .content {
   height: auto;
   float: right;
-  width: 75%;
+  width: 60%;
   margin-top: 60px;
 }
 
 .page-top {
-  width: 75%;
+  width: 60%;
   position: fixed;
   right: 0;
   z-index: 3;
@@ -171,7 +170,7 @@ a:hover, a:active {
 }
 
 .sidebar {
-  width: 25%;
+  width: 40%;
   -webkit-background-size: cover;
   background-size: cover;
   background-color: #fff;
@@ -207,7 +206,6 @@ a:hover, a:active {
   color: #464646;
   font-size: 2rem;
   font-weight: bold;
-  font-family: 'Pacifico','Microsoft YaHei';
 }
 .sidebar .social-links {
   list-style: none;
