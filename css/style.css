@@ -207,6 +207,7 @@ a:hover, a:active {
   color: #464646;
   font-size: 2rem;
   font-weight: bold;
+  font-family: 'Pacifico','Microsoft YaHei';
 }
 .sidebar .social-links {
   list-style: none;
