@@ -128,7 +128,7 @@
         Accept: 'application/vnd.github.v3.raw'
       },
       type: 'get',
-      url: 'https://github.com/whip1ash/whip1ash.github.io',
+      url: 'https://api.github.com/users/whip1ash/repos',
       success: function (data) {
         var repos = data.sort(function(a, b) {
           return (b.stargazers_count - a.stargazers_count)
