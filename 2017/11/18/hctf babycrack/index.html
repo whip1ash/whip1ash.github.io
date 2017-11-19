@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="whip1ash&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      hctf babycrack | whip1ash
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>whip1ash</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>hctf babycrack</h2>
+  <p class="post-date">2017-11-18</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="hctf-babycrack-–初探js逆向"><a href="#hctf-babycrack-–初探js逆向" class="headerlink" title="hctf babycrack –初探js逆向"></a>hctf babycrack –初探js逆向</h1><p>emmm…..<br>原来也没接触过js逆向 这也是第一次做 比较菜 大佬勿喷…<br>ps:写的比较乱 参考的时候先搜索原本函数 然后再进行变形<br>我这里是通过chrome的debug去打断点分析和terminal对变量做一些操作去推测并验证<br>把分析出来的已知函数用起个名然后全局替换</p>
+<p>一块块拆出来吧 以下顺序为函数调用顺序</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">_0xd4b7d6, _0xad25ab</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> _0x5e3956 = <span class="function"><span class="keyword">function</span>(<span class="params">_0x1661d3</span>) </span>&#123;</span><br><span class="line">			<span class="keyword">while</span> (--_0x1661d3) &#123;</span><br><span class="line">				_0xd4b7d6[<span class="string">'push'</span>](_0xd4b7d6[<span class="string">'shift'</span>]());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line">	_0x5e3956(++_0xad25ab);</span><br><span class="line">&#125;(_0x180a, <span class="number">0x1a2</span>));</span><br></pre></td></tr></table></figure>
+<p>优化一下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">function_stack, param2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> push_shift = <span class="function"><span class="keyword">function</span>(<span class="params">param</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (--param) &#123;</span><br><span class="line">            function_stack[<span class="string">'push'</span>](function_stack[<span class="string">'shift'</span>]());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    push_shift(++param2);</span><br><span class="line">&#125;(function_stack, <span class="number">0x1a2</span>));</span><br></pre></td></tr></table></figure>
+<p><img src="/media/15109847452670.jpg" alt=""><br>由此可以看出,通过<code>array_name[&#39;function_name&#39;]()</code>可以调用数组的自带方法,等价于<code>array_name.function_name()</code><br>这里<code>function_stack.push(function_stack.shift())</code> 0x1a2次<br>刚开始感觉这里没啥用 其实是把array的第一个元素给放到最后一个 一共做了0x1a2次<br>最后这个数组长这个样<br><img src="/media/15109897878500.jpg" alt=""></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>[<span class="string">'onload'</span>] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    setInterval(_0xa180(<span class="string">'0x38'</span>), <span class="number">0x32</span>);</span><br><span class="line">    test();</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>给_0xa180起个名叫exec_function,去上面看看这个函数干啥了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _0xa180 = <span class="function"><span class="keyword">function</span>(<span class="params">_0x5c351c, _0x2046d8</span>) </span>&#123;</span><br><span class="line">    _0x5c351c = _0x5c351c - <span class="number">0x0</span>;</span><br><span class="line">    <span class="keyword">var</span> _0x26f3b3 = function_stack[_0x5c351c];</span><br><span class="line">    <span class="keyword">return</span> _0x26f3b3;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>很明显了,是把函数名从function_stack里拿出来</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> exec_function = <span class="function"><span class="keyword">function</span>(<span class="params">position, _0x2046d8</span>) </span>&#123;</span><br><span class="line">    position = position - <span class="number">0x0</span>;</span><br><span class="line">    <span class="keyword">var</span> function_name = function_stack[position];</span><br><span class="line">    <span class="keyword">return</span> function_name;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这块也很明显了,每50ms调用变形后的function_stack[0x38]就是<code>window.console.clear();window.console.log(&#39;Welcome to HCTF :&gt;&#39;)&#39;</code><br>然后再来看调用的test()函数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _0x5bf136 = <span class="built_in">document</span>[exec_function(<span class="string">'0x32'</span>)](exec_function(<span class="string">'0x33'</span>))[<span class="string">'value'</span>];</span><br><span class="line">    <span class="keyword">if</span> (_0x5bf136 == <span class="string">''</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>[exec_function(<span class="string">'0x34'</span>)](exec_function(<span class="string">'0x35'</span>));</span><br><span class="line">        <span class="keyword">return</span> ![];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> _0x4d0e29 = check(_0x5bf136);</span><br><span class="line">    <span class="keyword">if</span> (_0x4d0e29) &#123;</span><br><span class="line">        alert(exec_function(<span class="string">'0x36'</span>));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        alert(exec_function(<span class="string">'0x37'</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还原回去</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> value = <span class="built_in">document</span>.getElementById(message)[<span class="string">'value'</span>];</span><br><span class="line">    <span class="keyword">if</span> (value == <span class="string">''</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'Welcom to HCTF :&gt;'</span>);</span><br><span class="line">        <span class="keyword">return</span> ![];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> status = check(value);</span><br><span class="line">    <span class="keyword">if</span> (status) &#123;</span><br><span class="line">        alert(<span class="string">"Congratulations! you got it!"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        alert(<span class="string">"Sorry, you are wrong..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>应该到了核心的部分 check函数 这个函数比较复杂 一点点拆开看吧</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _0x2e2f8d = [<span class="string">'code'</span>, exec_function(<span class="string">'0x0'</span>), exec_function(<span class="string">'0x1'</span>), exec_function(<span class="string">'0x2'</span>), <span class="string">'invalidMonetizationCode'</span>, exec_function(<span class="string">'0x3'</span>), exec_function(<span class="string">'0x4'</span>), exec_function(<span class="string">'0x5'</span>), charAt, exec_function(<span class="string">'0x7'</span>), exec_function(<span class="string">'0x8'</span>), exec_function(<span class="string">'0x9'</span>), exec_function(<span class="string">'0xa'</span>), exec_function(<span class="string">'0xb'</span>), exec_function(<span class="string">'0xc'</span>), exec_function(<span class="string">'0xd'</span>), exec_function(<span class="string">'0xe'</span>), exec_function(<span class="string">'0xf'</span>), exec_function(<span class="string">'0x10'</span>), exec_function(<span class="string">'0x11'</span>), <span class="string">'url'</span>, exec_function(<span class="string">'0x12'</span>), exec_function(<span class="string">'0x13'</span>), exec_function(<span class="string">'0x14'</span>), exec_function(<span class="string">'0x15'</span>), exec_function(<span class="string">'0x16'</span>), exec_function(<span class="string">'0x17'</span>), exec_function(<span class="string">'0x18'</span>), <span class="string">'tabs'</span>, exec_function(<span class="string">'0x19'</span>), exec_function(<span class="string">'0x1a'</span>), exec_function(<span class="string">'0x1b'</span>), exec_function(<span class="string">'0x1c'</span>), exec_function(<span class="string">'0x1d'</span>), <span class="string">'replace'</span>, exec_function(<span class="string">'0x1e'</span>), exec_function(<span class="string">'0x1f'</span>), <span class="string">'includes'</span>, exec_function(<span class="string">'0x20'</span>), <span class="string">'length'</span>, exec_function(<span class="string">'0x21'</span>), exec_function(<span class="string">'0x22'</span>), exec_function(<span class="string">'0x23'</span>), exec_function(<span class="string">'0x24'</span>), exec_function(<span class="string">'0x25'</span>), exec_function(<span class="string">'0x26'</span>), exec_function(<span class="string">'0x27'</span>), exec_function(<span class="string">'0x28'</span>), exec_function(<span class="string">'0x29'</span>), <span class="string">'toString'</span>, exec_function(<span class="string">'0x2a'</span>), <span class="string">'split'</span>];</span><br><span class="line"><span class="keyword">var</span> _0x50559f = value[_0x2e2f8d[<span class="number">0x5</span>]](<span class="number">0x0</span>, <span class="number">0x4</span>);</span><br><span class="line"><span class="keyword">var</span> _0x5cea12 = <span class="built_in">parseInt</span>(btoa(_0x50559f), <span class="number">0x20</span>);</span><br></pre></td></tr></table></figure>
+<p>首先通过exec_function()把函数名都拿出来,然后再还原一下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> check_func_stack = [<span class="string">'code'</span>, <span class="string">'version'</span>, <span class="string">'error'</span>, <span class="string">'download'</span>, <span class="string">'invalidMonetizationCode'</span>, <span class="string">'substring'</span>, <span class="string">'push'</span>, <span class="string">'Function'</span>, <span class="string">'charAt'</span>, <span class="string">'idle'</span>, <span class="string">'pyW5F1U43VI'</span>, <span class="string">'init'</span>, <span class="string">'https://the-extension'</span>, <span class="string">'local'</span>, <span class="string">'storage'</span>, <span class="string">'eval'</span>, <span class="string">'then'</span>, <span class="string">'get'</span>, <span class="string">'getTime'</span>, <span class="string">'setUTCHours'</span>, <span class="string">'url'</span>, <span class="string">'origin'</span>, <span class="string">'set'</span>, <span class="string">'GET'</span>, <span class="string">'loading'</span>, <span class="string">'status'</span>, <span class="string">'removeListener'</span>, <span class="string">'onUpdated'</span>, <span class="string">'tabs'</span>, <span class="string">'callee'</span>, <span class="string">'addListener'</span>, <span class="string">'onMessage'</span>, <span class="string">'runtime'</span>, <span class="string">'executeScript'</span>, <span class="string">'replace'</span>, <span class="string">'data'</span>, <span class="string">'test'</span>, <span class="string">'includes'</span>, <span class="string">'http://'</span>, <span class="string">'length'</span>, <span class="string">'Url error'</span>, <span class="string">'query'</span>, <span class="string">'filter'</span>, <span class="string">'active'</span>, <span class="string">'floor'</span>, <span class="string">'random'</span>, <span class="string">'charCodeAt'</span>, <span class="string">'fromCharCode'</span>, <span class="string">'parse'</span>, <span class="string">'toString'</span>, <span class="string">'substr'</span>, <span class="string">'split'</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//取5位;</span></span><br><span class="line"><span class="keyword">var</span> sub_value = value.substring(<span class="number">0x0</span>, <span class="number">0x4</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//btoa() base64;</span></span><br><span class="line"><span class="comment">//parseInt()将一个字符串解析成整数;</span></span><br><span class="line"><span class="keyword">var</span> parse_int = <span class="built_in">parseInt</span>(btoa(sub_value), <span class="number">0x20</span>);</span><br></pre></td></tr></table></figure>
+<p>然后有一个eval(),这个eval()让我花了大概有两个小时,我发现这个eval好像没有什么用处,正则什么都没过滤<br>这个eval好像是防debug的 一直在debuger里面出不来 我给打掉了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="function"><span class="keyword">function</span>(<span class="params">_0x200db2, _0x177f13, _0x46da6f, _0x802d91, _0x2d59cf, _0x2829f2</span>) </span>&#123;</span><br><span class="line">    _0x2d59cf = <span class="function"><span class="keyword">function</span>(<span class="params">_0x4be75f</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _0x4be75f[<span class="string">'toString'</span>](_0x177f13);</span><br><span class="line">    &#125;</span><br><span class="line">    ;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="string">''</span>[<span class="string">'replace'</span>](<span class="regexp">/^/</span>, <span class="built_in">String</span>)) &#123;</span><br><span class="line">        <span class="keyword">while</span> (_0x46da6f--)</span><br><span class="line">            _0x2829f2[_0x2d59cf(_0x46da6f)] = _0x802d91[_0x46da6f] || _0x2d59cf(_0x46da6f);</span><br><span class="line">        _0x802d91 = [<span class="function"><span class="keyword">function</span>(<span class="params">_0x5e8f1a</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> _0x2829f2[_0x5e8f1a];</span><br><span class="line">        &#125;</span><br><span class="line">        ];</span><br><span class="line">        _0x2d59cf = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> exec_function(<span class="string">'0x2b'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        ;</span><br><span class="line">        _0x46da6f = <span class="number">0x1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ;<span class="keyword">while</span> (_0x46da6f--)</span><br><span class="line">        <span class="keyword">if</span> (_0x802d91[_0x46da6f])</span><br><span class="line">            _0x200db2 = _0x200db2[exec_function(<span class="string">'0x2c'</span>)](<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'\x5cb'</span> + _0x2d59cf(_0x46da6f) + <span class="string">'\x5cb'</span>,<span class="string">'g'</span>), _0x802d91[_0x46da6f]);</span><br><span class="line">    <span class="keyword">return</span> _0x200db2;</span><br><span class="line">&#125;(exec_function(<span class="string">'0x2d'</span>), <span class="number">0x11</span>, <span class="number">0x11</span>, exec_function(<span class="string">'0x2e'</span>)[<span class="string">'split'</span>](<span class="string">'|'</span>), <span class="number">0x0</span>, &#123;&#125;));</span><br></pre></td></tr></table></figure>
+<p>这里的过程写注释里了 一般遇到<code>function(){}()</code>这种形式,我都是从后面的传参开始看,所以这个函数调用顺序应该是从后面真的调用开始</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//注意 这里为了好看我把参数位置换了一下</span></span><br><span class="line"><span class="comment">//_0x177f13 = 0x11 _0x46da6f = 0x11 _0x2d59cf=0x0  _0x2829f2 = &#123;&#125;</span></span><br><span class="line"><span class="built_in">eval</span>(<span class="function"><span class="keyword">function</span>(<span class="params">_0x200db2,  _0x802d91, _0x177f13 , _0x46da6f , _0x2d59c, _0x2829f2</span>) </span>&#123;</span><br><span class="line">    toString_function = <span class="function"><span class="keyword">function</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">        <span class="comment">//toString(0x11)</span></span><br><span class="line">        <span class="comment">//String 类型</span></span><br><span class="line">        <span class="keyword">return</span> str.toString(_0x177f13);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这个if恒为真 在下面把这块分块还原了一下 在注释里</span></span><br><span class="line">    <span class="comment">// if (!''['replace'](/^/, String)) &#123;</span></span><br><span class="line">    <span class="comment">//     while (_0x46da6f--)</span></span><br><span class="line">    <span class="comment">//         _0x2829f2[_0x2d59cf(_0x46da6f)] = _0x802d91[_0x46da6f] || _0x2d59cf(_0x46da6f);</span></span><br><span class="line">    <span class="comment">//     _0x802d91 = [function(_0x5e8f1a) &#123;</span></span><br><span class="line">    <span class="comment">//         return _0x2829f2[_0x5e8f1a];</span></span><br><span class="line">    <span class="comment">//     &#125;</span></span><br><span class="line">    <span class="comment">//     ];</span></span><br><span class="line">    <span class="comment">//     _0x2d59cf = function() &#123;</span></span><br><span class="line">    <span class="comment">//         return exec_function('0x2b');</span></span><br><span class="line">    <span class="comment">//     &#125;</span></span><br><span class="line">    <span class="comment">//     ;</span></span><br><span class="line">    <span class="comment">//     _0x46da6f = 0x1;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//while(0x11) 感觉这里没用 先跳</span></span><br><span class="line">    <span class="keyword">while</span> (_0x46da6f--)</span><br><span class="line">        <span class="comment">//toString_funcrion(0x11)=10</span></span><br><span class="line">        <span class="comment">//&#123;&#125;.toString_function(0x11) = split_unknow_str2[0x11] || toString_function(0x11);</span></span><br><span class="line">        _0x2829f2[toString_function(_0x46da6f)] = _0x802d91[_0x46da6f] || toString_function(_0x46da6f);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// split_unknow_str2 = [function(param)&#123;</span></span><br><span class="line">    <span class="comment">//     return &#123;&#125;[param]</span></span><br><span class="line">    <span class="comment">// &#125;];</span></span><br><span class="line">    _0x802d91 = [<span class="function"><span class="keyword">function</span>(<span class="params">param</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _0x2829f2[param];</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    return_a_w = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"\w+"</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    _0x46da6f = <span class="number">0x1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这个while只执行一次 if在这个while里为真 其实就是个正则了 通过我在console的测试 这里什么都没滤掉 \x5c 就是 \</span></span><br><span class="line">    <span class="keyword">while</span> (_0x46da6f--)</span><br><span class="line">        <span class="keyword">if</span> (_0x802d91[_0x46da6f])</span><br><span class="line">            _0x200db2 = _0x200db2[<span class="string">'replace'</span>](<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'\x5cb'</span> + <span class="string">'\w+'</span> + <span class="string">'\x5cb'</span>,<span class="string">'g'</span>), _0x802d91[_0x46da6f]);</span><br><span class="line">    <span class="keyword">return</span> _0x200db2;</span><br><span class="line">&#125;(unknow_str1, split_unknow_str2, <span class="number">0x11</span>, <span class="number">0x11</span>, <span class="number">0x0</span>, <span class="string">'&#123;&#125;'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// var unknow_str1 = "(3()&#123;"+"(3 a()&#123;7&#123;(3 b(2)&#123;9((''+(2/2)).5!==1||2%g===0)&#123;(3()&#123;&#125;).8('4')()&#125;c&#123;4&#125;b(++2)&#125;)(0)&#125;d(e)&#123;f(a,6)&#125;&#125;)()&#125;)();";</span></span><br><span class="line"><span class="comment">// var unknow_str2 = '||i|function|debugger|length|5000|try|constructor|if|||else|catch||setTimeout|20';</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//split_unknow_str2 = unknow_str.split('|');</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// var split_unknow_str2 = ["", "", "i", "function", "debugger", "length", "5000", "try", "constructor", "if", "", "", "else", "catch", "", "setTimeout", "20"];</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//由此感觉上面整段函数没有什么用</span></span><br></pre></td></tr></table></figure>
+<p>233333 在上面那个eval浪费了不少时间 好像是个防debug的 一直在debuger里出不来…..<br>于是我把他注释掉了<br>往下走</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">_0x3291b7, _0xced890</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _0xaed809 = <span class="function"><span class="keyword">function</span>(<span class="params">_0x3aba26</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (--_0x3aba26) &#123;</span><br><span class="line">            _0x3291b7[exec_function(<span class="string">'0x4'</span>)](_0x3291b7[<span class="string">'shift'</span>]());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    _0xaed809(++_0xced890);</span><br><span class="line">&#125;(_0x2e2f8d, _0x5cea12 % <span class="number">0x7b</span>));</span><br></pre></td></tr></table></figure>
+<p>还原回去可以比较简单的看出来,这又是一个打乱函数栈的操作</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">check_func_stack, param</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> random_positon = <span class="function"><span class="keyword">function</span>(<span class="params">count_num</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (--count_num) &#123;</span><br><span class="line">            check_func_stack.push(check_func_stack.shift());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    random_positon(++param);</span><br><span class="line">&#125;(check_func_stack, parse_int % <span class="number">0x7b</span>));</span><br></pre></td></tr></table></figure>
+<p>但是这里循环次数是个变量… 所以不可预测了 往后看吧<br><code>ps:parse_int 在上面有赋值</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _0x43c8d1 = <span class="function"><span class="keyword">function</span>(<span class="params">_0x3120e0</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _0x3120e0 = <span class="built_in">parseInt</span>(_0x3120e0, <span class="number">0x10</span>);</span><br><span class="line">    <span class="keyword">var</span> _0x3a882f = _0x2e2f8d[_0x3120e0];</span><br><span class="line">    <span class="keyword">return</span> _0x3a882f;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> _0x1c3854 = <span class="function"><span class="keyword">function</span>(<span class="params">_0x52ba71</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _0x52b956 = <span class="string">'0x'</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> _0x59c050 = <span class="number">0x0</span>; _0x59c050 &lt; _0x52ba71[_0x43c8d1(<span class="number">0x8</span>)]; _0x59c050++) &#123;</span><br><span class="line">        _0x52b956 += _0x52ba71[_0x43c8d1(<span class="string">'f'</span>)](_0x59c050)[_0x43c8d1(<span class="number">0xc</span>)](<span class="number">0x10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _0x52b956;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>定义两个函数 有一个获取函数名的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> get_func_name = <span class="function"><span class="keyword">function</span>(<span class="params">func_pos</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> func_pos = <span class="built_in">parseInt</span>(func_pos, <span class="number">0x10</span>);</span><br><span class="line">    <span class="keyword">var</span> function_name = check_func_stack[func_pos];</span><br><span class="line">    <span class="keyword">return</span> function_name;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> _0x1c3854 = <span class="function"><span class="keyword">function</span>(<span class="params">param</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _0x52b956 = <span class="string">'0x'</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>; i &lt; param[get_func_name(<span class="number">0x8</span>)]; i++) &#123;</span><br><span class="line">        _0x52b956 += param[get_func_name(<span class="string">'f'</span>)](i)[get_func_name(<span class="number">0xc</span>)](<span class="number">0x10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _0x52b956;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>等后面调用了再回来细看,往后走</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _0x76e1e8 = value[get_func_name(<span class="number">0xe</span>)](<span class="string">'_'</span>);</span><br></pre></td></tr></table></figure>
+<p>我在上面这一句打了个断点 随便输入了个值 发现直接跳到了exception 所以推测刚才那个随机化的函数并不是让函数栈完全随机化 而是我们输入的value的前五个字符在经过处理后要等于一个或一些特定的值 让函数栈处于一个特殊的状态 才能继续执行而不是不到exception<br>所以可以确定这么几个条件<br>字符串自带方法<br>最少只需要一个函数</p>
+<p>断网了 明天再做</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JavaScript逆向" >
+    <span class="tag-code">JavaScript逆向</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    <div class="qrcode">
+      <canvas id="share-qrcode"></canvas>
+      <p class="notice">扫描二维码，分享此文章</p>
+    </div>
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#hctf-babycrack-–初探js逆向"><span class="toc-nav-text">hctf babycrack –初探js逆向</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://whip1ash.github.io/2017/11/18/hctf babycrack/';
+    var banner = 'undefined'
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "whip1ash";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "hctf babycrack",
+        owner: "whip1ash",
+        repo: "whip1ash.github.io",
+        oauth: {
+          client_id: "ae16d933c78b6cc642c8",
+          client_secret: "e9045e51de8f846b89b22e347cd34d1fe345c533"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2017 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine == 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

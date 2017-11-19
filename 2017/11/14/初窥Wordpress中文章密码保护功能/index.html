@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="whip1ash&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      初窥Wordpress中文章密码保护功能 | whip1ash
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>whip1ash</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>初窥Wordpress中文章密码保护功能</h2>
+  <p class="post-date">2017-11-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>最近冥冥之中总跟wordpress进行接触.那天在在一个blog里看到一篇密码保护的文章,开始还以为是个题目,后来发现是Wordpress自带的功能,就大概看了一眼,发现这个密码保护功能还是蛮有意思的.</p>
+<h1 id="Content"><a href="#Content" class="headerlink" title="Content"></a>Content</h1><p>刚开始一抓包,发现这个form表单发给<code>wp-login.php?action=postpass</code></p>
+<p><img src="/media/Jietu20171114-152829.jpg" alt="Jietu20171114-152829"></p>
+<p>返回回来一个302<br><code>wp-login</code>对<code>action=postpass</code>做了如下操作</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> ($action) &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="string">'postpass'</span> :</span><br><span class="line">	<span class="keyword">if</span> ( ! array_key_exists( <span class="string">'post_password'</span>, $_POST ) ) &#123;</span><br><span class="line">		wp_safe_redirect( wp_get_referer() );</span><br><span class="line">		<span class="keyword">exit</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">require_once</span> ABSPATH . WPINC . <span class="string">'/class-phpass.php'</span>;</span><br><span class="line">	$hasher = <span class="keyword">new</span> PasswordHash( <span class="number">8</span>, <span class="keyword">true</span> );</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Filters the life span of the post password cookie.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * By default, the cookie expires 10 days from creation. To turn this</span></span><br><span class="line"><span class="comment">	 * into a session cookie, return 0.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@since</span> 3.7.0</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> int $expires The expiry time, as passed to setcookie().</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	$expire = apply_filters( <span class="string">'post_password_expires'</span>, time() + <span class="number">10</span> * DAY_IN_SECONDS );</span><br><span class="line">	$referer = wp_get_referer();</span><br><span class="line">	<span class="keyword">if</span> ( $referer ) &#123;</span><br><span class="line">		$secure = ( <span class="string">'https'</span> === parse_url( $referer, PHP_URL_SCHEME ) );</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		$secure = <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	setcookie( <span class="string">'wp-postpass_'</span> . COOKIEHASH, $hasher-&gt;HashPassword( wp_unslash( $_POST[<span class="string">'post_password'</span>] ) ), $expire, COOKIEPATH, COOKIE_DOMAIN, $secure );</span><br><span class="line"></span><br><span class="line">	wp_safe_redirect( wp_get_referer() );</span><br><span class="line"></span><br><span class="line">	<span class="keyword">exit</span>();</span><br></pre></td></tr></table></figure>
+<p>看完这很疑惑啊,wordpress没有对post过来的密码做任何的验证啊,只不过把它unslash了一下,做了hash写到cookie里了!<br>后来仔细一想,wordpress这里返回一个302,只要wordpress检验cookie是否有效是不是就可以判断用户输入的密码是否正确的.</p>
+<p>Wordpress在这里接受密码后计算hash后写到cookie里其实是非常高明的一手 </p>
+<ol>
+<li>这里输入密码没有验证码,我在这里第一反应是可以爆破,结果发现不过结果正确与否,返回的302除了<code>set-cookie</code>里<code>wp-postpass_COOKIEHASH</code>和<code>wp-postpass_COOKIEHASH</code>的<code>value</code>不同外,其他内容都一样,所以基本无法爆破.</li>
+<li>我们输入的参数不带到sql语句中进行查询,有效抵抗sql注入</li>
+<li>只要cookie生成的算法足够强大,这里基本不可能碰撞出来,经过验证,Wordpress的这个算法真的很强大…….</li>
+</ol>
+<h2 id="Wordpress-hook机制"><a href="#Wordpress-hook机制" class="headerlink" title="Wordpress hook机制"></a>Wordpress hook机制</h2><p>我在这里最头疼的问题就是,Wordpress在返回一个带有 <code>set-cookie</code> 的302后就exit();了,又因为我的referrer是根路径,所以在localhost/index.php进行加载(渲染)的时候一定对cookie进行了某种验证.<br>由于Wordpress加载了大量的文件,定位起来相当的麻烦,在其中加载了大量的<code>do_action(),apply_filters()</code>,从源码中可以看出来这是在调用用户自定义函数,在网上搜了一下,对这个机制有比较模糊的理解.</p>
+<p>Wordpress定义了一系列的事件(Event)/钩子(Hook),当程序执行到某一事件/钩子的时触发这一事件/钩子的一系列函数.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add_action(Event/Hook,functon)</span><br><span class="line">do_action(Event/Hook)</span><br></pre></td></tr></table></figure>
+<p>关于wordpress的hook机制就在这里不再赘述了,但确实在这里绕了很久.刚开始从字面上理解<code>do_action()</code>以为这个里面的event是用户定义的函数,通过全局搜索怎么也搜不出来,简直是要崩溃了.后来发现<code>add_action()</code>才是函数的执行.</p>
+<h2 id="PasswordHash-CheckPassword"><a href="#PasswordHash-CheckPassword" class="headerlink" title="PasswordHash::CheckPassword()"></a>PasswordHash::CheckPassword()</h2><p>通过查看源代码,发现<code>wp-login.php</code>中,通过<code>HashPassword()</code>对输入进行加密,与之对应的<code>CheckPassword()</code>对hash进行认证,所以通过给<code>CheckPassword()</code>打断点来确定根路径加载的调用栈,在这里强推phpstorm,可以清晰的查看调用栈.</p>
+<p><img src="/media/Jietu20171115-224839.jpg" alt="Jietu20171115-224839"><br>一目了然了</p>
+<h1 id="Summry"><a href="#Summry" class="headerlink" title="Summry"></a>Summry</h1><p>等什么时候用到Wordpress的hook机制的时候再详细研究一下,感觉这个hook机制做的挺巧妙的.</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#php" >
+    <span class="tag-code">php</span>
+  </a>
+
+  <a href="/tags#代码审计" >
+    <span class="tag-code">代码审计</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    <div class="qrcode">
+      <canvas id="share-qrcode"></canvas>
+      <p class="notice">扫描二维码，分享此文章</p>
+    </div>
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Content"><span class="toc-nav-text">Content</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Wordpress-hook机制"><span class="toc-nav-text">Wordpress hook机制</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#PasswordHash-CheckPassword"><span class="toc-nav-text">PasswordHash::CheckPassword()</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Summry"><span class="toc-nav-text">Summry</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://whip1ash.github.io/2017/11/14/初窥Wordpress中文章密码保护功能/';
+    var banner = 'undefined'
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "whip1ash";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "初窥Wordpress中文章密码保护功能",
+        owner: "whip1ash",
+        repo: "whip1ash.github.io",
+        oauth: {
+          client_id: "ae16d933c78b6cc642c8",
+          client_secret: "e9045e51de8f846b89b22e347cd34d1fe345c533"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2017 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine == 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
