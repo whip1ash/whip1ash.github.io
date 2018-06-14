@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="whip1ash&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      postMessage安全性的一点点研究 | whip1ash
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>whip1ash</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>postMessage安全性的一点点研究</h2>
+  <p class="post-date">2018-06-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="说点废话"><a href="#说点废话" class="headerlink" title="说点废话"></a>说点废话</h1><pre><code>近期深刻认识到自己能力不足，水平有限，必须沉下心来进行学习和研究，否则一辈子除了搬砖什么都做不了。
+postMessage是为了解决跨窗口跨域的情况，使用不当会存在一些安全问题（虽然我没挖到Orz）。
+</code></pre><h1 id="postMessage是什么"><a href="#postMessage是什么" class="headerlink" title="postMessage是什么"></a>postMessage是什么</h1><h2 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">targetWindow.postMessage(message, targetOrigin, [transfer]);</span><br></pre></td></tr></table></figure>
+<p>不造轮子了，mdn上说的比较清楚了。</p>
+<blockquote>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage" target="_blank" rel="external">https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage</a></p>
+</blockquote>
+<p>当然了，发送消息是不行的，目标窗口肯定需要接受这个消息，所以需要在targetWindow添加一个Message的监听器。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'message'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">event</span>)</span>&#123;</span><br><span class="line">    <span class="comment">//event.data就是接收到的数据</span></span><br><span class="line">    <span class="built_in">console</span>.log(event.data);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这个MessageEvent除了data属性还有source属性和origin属性是比较常见的。source属性就是发送消息的窗口的window对象，origin属性顾名思义就是发送消息的源。</p>
+<p>在我实际测试后，无法向使用window.open得到的window对象发送消息，就像这样的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> popup = <span class="built_in">window</span>.open(<span class="string">'http://www.target.com/listener.html'</span>);</span><br><span class="line">popup.postMessage(<span class="string">'Hello World!'</span>,<span class="string">'http://www.target.com'</span>);</span><br></pre></td></tr></table></figure>
+<p>神奇的是，在使用setInterval大法后就正常了，但是仍然收不到第一个请求。推测是originWindow发送message时，targetWindow监听器没有加载完成。从网上随便找了个sleep函数，就像下面这样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> popup = <span class="built_in">window</span>.open(<span class="string">"http://www.poc.com/listener.html"</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">post</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	popup.postMessage(<span class="string">'message'</span>,<span class="string">'*'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sleep</span>(<span class="params">numberMillis</span>) </span>&#123; </span><br><span class="line">	<span class="keyword">var</span> now = <span class="keyword">new</span> <span class="built_in">Date</span>(); </span><br><span class="line">	<span class="keyword">var</span> exitTime = now.getTime() + numberMillis; </span><br><span class="line">	<span class="keyword">while</span> (<span class="literal">true</span>) &#123; </span><br><span class="line">		now = <span class="keyword">new</span> <span class="built_in">Date</span>(); </span><br><span class="line">		<span class="keyword">if</span> (now.getTime() &gt; exitTime) </span><br><span class="line">		<span class="keyword">return</span>; </span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br><span class="line">sleep(<span class="number">10000</span>);</span><br><span class="line">post();</span><br></pre></td></tr></table></figure>
+<p>但是sleep函数执行时，targetWindow也给sleep了。<br>神奇的js。</p>
+<h1 id="postMessage有什么问题"><a href="#postMessage有什么问题" class="headerlink" title="postMessage有什么问题"></a>postMessage有什么问题</h1><h2 id="伪造接收端"><a href="#伪造接收端" class="headerlink" title="伪造接收端"></a>伪造接收端</h2><p>伪造接收端就比较简单了，如果你见到了下面这样的写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">targetWindow.postMessage(message,&apos;*&apos;)</span><br></pre></td></tr></table></figure>
+<p>就意味着任意域可以接收到这条消息。现实往往不像看起来那么美好，主要问题不是人家让不让你收（origin），而是发不发给你（targetWindow）。也就是说如果人家的targetWindow是子窗口，那么你是根本收不到消息哒~<br>发送给父窗口的情况有可能存在于一些js的widget，或者iframe的页面中。如果是发送给window.parent.prames，那么很遗憾的告诉你，基本也是没希望的。因为大部分网站已经设置<code>X-Frame-Options: Origin</code>，只有同源才可以使用iframe包裹。</p>
+<h2 id="伪造发送端"><a href="#伪造发送端" class="headerlink" title="伪造发送端"></a>伪造发送端</h2><p>如果监听器（EventListener）没有校验消息的来源（origin），或者校验存在问题的时候，就意味着我们可以给它发送消息。并且会代入程序逻辑。<br>比如下面这样的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'message'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">event</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> data = event.data;</span><br><span class="line">    <span class="comment">//肯定不会有人直接这么写，在这里简化过程。</span></span><br><span class="line">    <span class="built_in">eval</span>(data);</span><br><span class="line">    <span class="comment">//xss</span></span><br><span class="line">    <span class="keyword">var</span> scriptEle = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</span><br><span class="line">    scriptEle.src = data;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>正确的写法应该是这样的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'message'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">event</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(event.orgin !== <span class="string">'http://www.origin.com'</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// process data</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h1 id="如何去挖"><a href="#如何去挖" class="headerlink" title="如何去挖"></a>如何去挖</h1><p>如何伪造接收端上面已经说得比较清楚了，使用chrome的search就可以全局搜索，但是有时候会有一些迷之搜不到的情况……<br><img src="/media/15289802633606.jpg" alt=""></p>
+<h2 id="伪造发送端-1"><a href="#伪造发送端-1" class="headerlink" title="伪造发送端"></a>伪造发送端</h2><p>在chrome的Global Listeners处看看当前页面存在几个监听器，打断点。使用<code>window.postMessage(poc,&#39;*&#39;)</code>去调就可以。<br><img src="/media/15289804818549.jpg" alt=""></p>
+<h3 id="trick"><a href="#trick" class="headerlink" title="trick"></a>trick</h3><ol>
+<li>有的时候全局搜索<code>addEventListener</code>会发现代码中存在但是却没有注册为Listener的情况，这个时候应该是没有触发响应的逻辑，具体什么时候会触发现在我也没有找到一定的规律（业务点）。</li>
+<li><code>attachEvent(&#39;onmessage&#39;,funciton(e){})</code>也会处理响应的message数据，建议也给断上。</li>
+<li>对于无法是有iframe包裹的情况可以尝试使用使用以下几种方法</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.open</span><br><span class="line"><span class="built_in">window</span>.opener</span><br><span class="line">&lt;a&gt;</span><br><span class="line">form post打开的窗口</span><br></pre></td></tr></table></figure>
+<ol>
+<li>window之间传送的消息如果是json的话有可能会有str2json的函数，这类函数中极有可能使用eval()</li>
+<li>message不仅仅可以传送string，同时可以传输object，传输过程中可能存在序列化和反序列化（挖CVE的同学划重点了 ps:个人瞎猜，不负责任）</li>
+</ol>
+<h1 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h1><p>有的时候见到<code>port1.postMessage(message)</code>的情况，不要奇怪，这是使用了messageChannel。messageChannel简单的说就是在两个窗口间创建一个通道，可以方便的发送消息。没有深入研究有没有伪造的可能。</p>
+<p>对于现在手上的项目进行挖掘后并没有很喜人的进展，我太菜了Orz…….</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JavaScript" >
+    <span class="tag-code">JavaScript</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    <div class="qrcode">
+      <canvas id="share-qrcode"></canvas>
+      <p class="notice">扫描二维码，分享此文章</p>
+    </div>
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#说点废话"><span class="toc-nav-text">说点废话</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#postMessage是什么"><span class="toc-nav-text">postMessage是什么</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Syntax"><span class="toc-nav-text">Syntax</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#postMessage有什么问题"><span class="toc-nav-text">postMessage有什么问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#伪造接收端"><span class="toc-nav-text">伪造接收端</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#伪造发送端"><span class="toc-nav-text">伪造发送端</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#如何去挖"><span class="toc-nav-text">如何去挖</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#伪造发送端-1"><span class="toc-nav-text">伪造发送端</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#trick"><span class="toc-nav-text">trick</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#写在后面"><span class="toc-nav-text">写在后面</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://whip1ash.github.io/2018/06/14/postMessage/';
+    var banner = 'undefined'
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "whip1ash";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "postMessage安全性的一点点研究",
+        owner: "whip1ash",
+        repo: "whip1ash.github.io",
+        oauth: {
+          client_id: "ae16d933c78b6cc642c8",
+          client_secret: "e9045e51de8f846b89b22e347cd34d1fe345c533"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine == 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
