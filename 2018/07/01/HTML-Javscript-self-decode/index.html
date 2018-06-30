@@ -121,20 +121,16 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="说点废话"><a href="#说点废话" class="headerlink" title="说点废话"></a>说点废话</h1><p>  挖洞的时候一直搞不明白编码的问题，抽了一晚上时间好好看了看，解决了不少心中的疑惑，感觉又变强了一点点。<br>  在辅助挖掘XSS的工具中总是能够见到编码转换的功能，原来根本不知道咋用。乱用一通，有的时候也能撞上一些，但是太看人品的漏洞挖的心里很没底。<br>  现在主要是用两个chrome插件，一个是360 keeteem的xss插件。</p>
+    <section class="markdown-content"><h1 id="说点废话"><a href="#说点废话" class="headerlink" title="说点废话"></a>说点废话</h1><p>  &emsp;&emsp;挖洞的时候一直搞不明白编码的问题，抽了一晚上时间好好看了看，解决了不少心中的疑惑，感觉又变强了一点点。<br>  &emsp;&emsp;在辅助挖掘XSS的工具中总是能够见到编码转换的功能，原来根本不知道咋用。乱用一通，有的时候也能撞上一些，但是太看人品的漏洞挖的心里很没底。<br>  &emsp;&emsp;现在主要是用两个chrome插件，一个是360 keeteem的xss插件。</p>
 <blockquote>
-<p><a href="https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US" target="_blank" rel="external">https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US</a><br>  另外一个是从wooyun drops上下载的XSS编码转换插件。<br>  链接: <a href="https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg" target="_blank" rel="external">https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg</a> 密码: qv5e<br>  百度云的头像被黑产给改了，所以看起来比较奇怪，目前还没找到怎么改的。</p>
+<p><a href="https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US" target="_blank" rel="external">https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US</a></p>
 </blockquote>
-<h1 id="浏览器自解码机制"><a href="#浏览器自解码机制" class="headerlink" title="浏览器自解码机制"></a>浏览器自解码机制</h1><p>  浏览器在解析HTML文档时无论按照什么顺序，主要有三个过程：HTML解析、CSS解析、JS解析和URL解析，每个解析器负责HTML文档中各自对应部分的解析工作。<br><img src="/media/15303770642372.jpg" alt="浏览器解析过程简图"><br>  从图中可以看出浏览器主要做了三部分的工作。</p>
-<ol>
-<li>HTML/SVG/XHTML 解析。解析这三种文件会产生一个DOM Tree。</li>
-<li>CSS 解析，解析CSS会产生CSS规则树。</li>
-<li>Javascript 解析。（暂时讨论JavaScript动态操作DOM Tree）。</li>
-<li><p>URL解析。</p>
-<p>众所周知，计算机是通过二进制流的方式进行通信的。对于浏览器与服务器的通信，可以简单的理解为服务器给浏览器返回了一长串字符串。浏览器需要识别这一长串字符串中哪些是文本字符（浏览器不需要解析，只需要显示出来），哪些是控制字符（对于HTML来说就是能够被解析为DOM Tree的字符）。作为攻击者，尽可能将用户输入的值让浏览器识别为控制字符，这样就可以造成反射XSS。<br>举个例子吧，比如一个意见反馈处，输入一个<code>&lt;img/src=1 onerror=alert(1)&gt;</code>而服务器过滤了<code>()</code>，所以输出给浏览器的值是<code>&lt;img/src=1 onerror=alert1&gt;</code>。<br>开发者心里想：“我过滤了括号，你没有办法执行函数啦~看你怎么办~”。<br>所以我们可以猜出来后台大概是这么写的：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str_replace(<span class="string">"("</span>,<span class="string">""</span>,$request_value);</span><br><span class="line">str_replace(<span class="string">")"</span>,<span class="string">""</span>,$request_value);</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
+<p>  &emsp;&emsp;另外一个是从wooyun drops上下载的XSS编码转换插件。<br>  &emsp;&emsp;链接: <a href="https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg" target="_blank" rel="external">https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg</a> 密码: qv5e<br>  &emsp;&emsp;百度云的头像被黑产给改了，所以看起来比较奇怪，目前还没找到怎么改的。</p>
+<h1 id="浏览器自解码机制"><a href="#浏览器自解码机制" class="headerlink" title="浏览器自解码机制"></a>浏览器自解码机制</h1><p>  &emsp;&emsp;浏览器在解析HTML文档时无论按照什么顺序，主要有三个过程：HTML解析、CSS解析、JS解析和URL解析，每个解析器负责HTML文档中各自对应部分的解析工作。<br><img src="/media/15303770642372.jpg" alt="浏览器解析过程简图"><br>  &emsp;&emsp;从图中可以看出浏览器主要做了三部分的工作。<br>  &emsp;&emsp;1. HTML/SVG/XHTML 解析。解析这三种文件会产生一个DOM Tree。<br>  &emsp;&emsp;2. CSS 解析，解析CSS会产生CSS规则树。<br>  &emsp;&emsp;3. Javascript 解析。（暂时讨论JavaScript动态操作DOM Tree）。<br>  &emsp;&emsp;4. URL解析。</p>
+<p>  &emsp;&emsp;众所周知，计算机是通过二进制流的方式进行通信的。对于浏览器与服务器的通信，可以简单的理解为服务器给浏览器返回了一长串字符串。浏览器需要识别这一长串字符串中哪些是文本字符（浏览器不需要解析，只需要显示出来），哪些是控制字符（对于HTML来说就是能够被解析为DOM Tree的字符）。作为攻击者，尽可能将用户输入的值让浏览器识别为控制字符，这样就可以造成反射XSS。</p>
+<p>  &emsp;&emsp;举个例子吧，比如一个意见反馈处，输入一个<code>&lt;img/src=1 onerror=alert(1)&gt;</code>而服务器过滤了<code>()</code>，所以输出给浏览器的值是<code>&lt;img/src=1 onerror=alert1&gt;</code>。<br>  &emsp;&emsp;开发者心里想：“我过滤了括号，你没有办法执行函数啦~看你怎么办~”。<br>  &emsp;&emsp;所以我们可以猜出来后台大概是这么写的：</p>
+  <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str_replace(<span class="string">"("</span>,<span class="string">""</span>,$request_value);</span><br><span class="line">str_replace(<span class="string">")"</span>,<span class="string">""</span>,$request_value);</span><br></pre></td></tr></table></figure>
+<p>  &emsp;&emsp;这个时候我们可以将<code>()</code>替换为<code>&amp;#40;&amp;#41;</code>，所以<code>$request_value == &quot;&lt;img/src=1 onerror=alert&amp;#40;1&amp;#41;&gt;&quot;</code>，服务器一看，OK，没什么问题，于是就写入到数据库中。</p>
 <h2 id="HTML自解码"><a href="#HTML自解码" class="headerlink" title="HTML自解码"></a>HTML自解码</h2><h2 id="JavaScript自解码"><a href="#JavaScript自解码" class="headerlink" title="JavaScript自解码"></a>JavaScript自解码</h2><h2 id="CSS自解码"><a href="#CSS自解码" class="headerlink" title="CSS自解码"></a>CSS自解码</h2></section>
     <!-- Tags START -->
     
