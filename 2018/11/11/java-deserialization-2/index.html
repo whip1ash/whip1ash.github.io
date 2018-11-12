@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
+  <head><meta name="generator" content="Hexo 3.8.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   <meta name="description" content="whip1ash&#39;s blog">
   <meta name="keyword" content="hexo-theme, vuejs">
-  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI" />
-  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI" />
+  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI">
+  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
   
   <title>
     
-      Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (2) | whip1ash
+      Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (3) | whip1ash
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 <script src="/js/gitment.js"></script>
 </head>
 <div class="wechat-share">
-  <img src="/css/images/logo.png" />
+  <img src="/css/images/logo.png">
 </div>
 
   <body>
@@ -114,7 +114,7 @@
 </header>
 
     <div id="article-banner">
-  <h2>Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (2)</h2>
+  <h2>Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (3)</h2>
   <p class="post-date">2018-11-11</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
@@ -139,7 +139,7 @@
 <p>这个看起来简直太熟悉了，构造方法把传进来的方法名，参数类型和参数赋给<code>InvokerTransforme</code>的几个属性，<code>transform</code>中分别通过反射进行调用。反射这一点可以看我上一篇的代码注释。</p>
 <h2 id="0x03-org-apache-commons-collections-functors-ChainedTransformer"><a href="#0x03-org-apache-commons-collections-functors-ChainedTransformer" class="headerlink" title="0x03 org.apache.commons.collections.functors.ChainedTransformer"></a>0x03 org.apache.commons.collections.functors.ChainedTransformer</h2><p><img src="/media/15419516691890.jpg" alt="-w994"></p>
 <p>这几个方法都比较简单，在这里，构造方法将数组赋给<code>iTransformers</code>属性，然后<code>transform</code>方法遍历数组中的每一个对象的transform方法，将数组中上一个transform方法返回的对象再当做参数传入到下一个对象的transform方法中。这里有点绕，debug一下就能很简单的看出来。</p>
-<h2 id="0x04-为什么这样就能成功执行呢"><a href="#0x04-为什么这样就能成功执行呢" class="headerlink" title="0x04 为什么这样就能成功执行呢"></a>0x04 为什么这样就能成功执行呢</h2><p>在<a href="http://whip1ash.cn/2018/11/06/java-deserialization-1/" target="_blank" rel="external">上一篇</a>我已经比较详细的写过一些反射的Demo，在Runtime的那个Demo里，用了一个比较简单的方法来调用Runtime这个单例模式下的类。但在这里存在一些限制，把<code>ConstantTransformer</code>和<code>InvokerTransformer</code>的逻辑整合一下，如下面的代码所示。</p>
+<h2 id="0x04-为什么这样就能成功执行呢"><a href="#0x04-为什么这样就能成功执行呢" class="headerlink" title="0x04 为什么这样就能成功执行呢"></a>0x04 为什么这样就能成功执行呢</h2><p>在<a href="http://whip1ash.cn/2018/11/06/java-deserialization-1/" target="_blank" rel="noopener">上一篇</a>我已经比较详细的写过一些反射的Demo，在Runtime的那个Demo里，用了一个比较简单的方法来调用Runtime这个单例模式下的类。但在这里存在一些限制，把<code>ConstantTransformer</code>和<code>InvokerTransformer</code>的逻辑整合一下，如下面的代码所示。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">public class limit &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line"></span><br><span class="line">        Object constantToReturn = &quot;A User Input Object&quot;;</span><br><span class="line">        //名称</span><br><span class="line">        String iMethodName = &quot;A Method Name&quot;;</span><br><span class="line">        //参数类型</span><br><span class="line">        Class[] iParamTypes = new Class[]&#123;&#125;;</span><br><span class="line">        //参数</span><br><span class="line">        Object[] iArgs = new Object[]&#123;&#125;;</span><br><span class="line"></span><br><span class="line">        Class cls = constantToReturn.getClass();</span><br><span class="line">        Method method = cls.getMethod(iMethodName,iParamTypes);</span><br><span class="line">        object = method.invoke(constantToReturn,iArgs);</span><br><span class="line">        </span><br><span class="line">        .......进入循环</span><br><span class="line">            </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>实现一下这个需求，代码如下所示，</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">reflact_runtime</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Object object = Runtime.class;</span><br><span class="line">        Class cls = object.getClass();</span><br><span class="line">    </span><br><span class="line">        Method method = cls.getMethod(<span class="string">"getMethod"</span>, String.class, Class[].class);</span><br><span class="line">        object = method.invoke(object,<span class="string">"getRuntime"</span>,<span class="keyword">new</span> Class[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        cls = object.getClass();</span><br><span class="line">        method = cls.getMethod(<span class="string">"invoke"</span>,Object.class, Object[].class);</span><br><span class="line">        object = method.invoke(object,<span class="keyword">null</span>,<span class="keyword">new</span> Object[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        cls = object.getClass();</span><br><span class="line">        method = cls.getMethod(<span class="string">"exec"</span>,String.class);</span><br><span class="line">        object = method.invoke(object,<span class="string">"open /Applications/Calculator.app"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -152,11 +152,11 @@
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#Java" >
+  <a href="/tags#Java">
     <span class="tag-code">Java</span>
   </a>
 
-  <a href="/tags#Deserialization" >
+  <a href="/tags#Deserialization">
     <span class="tag-code">Deserialization</span>
   </a>
 
@@ -251,7 +251,7 @@
     var gitmentConfig = "whip1ash";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (2)",
+        id: "Apache Commons Collections反序列化漏洞分析 - 从0开始学习Java反序列化 (3)",
         owner: "whip1ash",
         repo: "whip1ash.github.io",
         oauth: {

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <head>
+  <head><meta name="generator" content="Hexo 3.8.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   <meta name="description" content="whip1ash&#39;s blog">
   <meta name="keyword" content="hexo-theme, vuejs">
-  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI" />
-  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI" />
+  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI">
+  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
   
@@ -27,7 +27,7 @@
 <script src="/js/gitment.js"></script>
 </head>
 <div class="wechat-share">
-  <img src="/css/images/logo.png" />
+  <img src="/css/images/logo.png">
 </div>
 
   <body>
@@ -125,9 +125,9 @@
   <article class="post-article">
     <section class="markdown-content"><h1 id="说点废话"><a href="#说点废话" class="headerlink" title="说点废话"></a>说点废话</h1><p>  &emsp;&emsp;挖洞的时候一直搞不明白编码的问题，抽了一晚上时间好好看了看，解决了不少心中的疑惑，感觉又变强了一点点。<br>  &emsp;&emsp;在辅助挖掘XSS的工具中总是能够见到编码转换的功能，原来根本不知道咋用。乱用一通，有的时候也能撞上一些，但是太看人品的漏洞挖的心里很没底。<br>  &emsp;&emsp;现在主要是用两个chrome插件，一个是360 keeteem的xss插件。</p>
 <blockquote>
-<p><a href="https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US" target="_blank" rel="external">https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US</a></p>
+<p><a href="https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US" target="_blank" rel="noopener">https://chrome.google.com/webstore/detail/xsssniper/pnhekakhikkhloodcedfcmfpjddcagpi?hl=en-US</a></p>
 </blockquote>
-<p>  &emsp;&emsp;另外一个是从wooyun drops上下载的XSS编码转换插件。<br>  &emsp;&emsp;链接: <a href="https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg" target="_blank" rel="external">https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg</a> 密码: qv5e<br>  &emsp;&emsp;百度云的头像被黑产给改了，所以看起来比较奇怪，目前还没找到怎么改的。</p>
+<p>  &emsp;&emsp;另外一个是从wooyun drops上下载的XSS编码转换插件。<br>  &emsp;&emsp;链接: <a href="https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg" target="_blank" rel="noopener">https://pan.baidu.com/s/1yqYhcwUL3-GqCgeWMRm4Vg</a> 密码: qv5e<br>  &emsp;&emsp;百度云的头像被黑产给改了，所以看起来比较奇怪，目前还没找到怎么改的。</p>
 <h1 id="浏览器自解码机制"><a href="#浏览器自解码机制" class="headerlink" title="浏览器自解码机制"></a>浏览器自解码机制</h1><p>  &emsp;&emsp;浏览器在解析HTML文档时无论按照什么顺序，主要有三个过程：HTML解析、CSS解析、JS解析和URL解析，每个解析器负责HTML文档中各自对应部分的解析工作。<br><img src="/media/15303770642372.jpg" alt="浏览器解析过程简图"><br>  &emsp;&emsp;从图中可以看出浏览器主要做了三部分的工作。<br>  &emsp;&emsp;1. HTML/SVG/XHTML 解析。解析这三种文件会产生一个DOM Tree。<br>  &emsp;&emsp;2. CSS 解析，解析CSS会产生CSS规则树。<br>  &emsp;&emsp;3. Javascript 解析。（暂时讨论JavaScript动态操作DOM Tree）。<br>  &emsp;&emsp;4. URL解析。（这一步的先后顺序不一定，看语境）</p>
 <p>  &emsp;&emsp;众所周知，计算机是通过二进制流的方式进行通信的。对于浏览器与服务器的通信，可以简单的理解为服务器给浏览器返回了一长串字符串。浏览器需要识别这一长串字符串中哪些是文本字符（浏览器不需要解析，只需要显示出来），哪些是控制字符（对于HTML来说就是能够被解析为DOM Tree的字符）。作为攻击者，尽可能将用户输入的值让浏览器识别为控制字符，这样就可以造成反射XSS。</p>
 <p>  &emsp;&emsp;举个例子吧，比如一个意见反馈处，输入一个<code>&lt;img/src=1 onerror=alert(1)&gt;</code>而服务器过滤了<code>()</code>，所以输出给浏览器的值是<code>&lt;img/src=1 onerror=alert1&gt;</code>。<br>  &emsp;&emsp;开发者心里想：“我过滤了括号，你没有办法执行函数啦~看你怎么办~”。<br>  &emsp;&emsp;所以我们可以猜出来后台大概是这么写的：</p>
@@ -155,7 +155,7 @@
 <p>&emsp;&emsp;对于上面的代码，对于<code>value</code>进行一次js编码能够防止代码注入吗？<br>&emsp;&emsp;答案肯定是不行的，浏览器首先进行js解码，解码后<code>setTimeout</code>函数中为字符串，问题是像<code>setTimeout()</code>,<code>setInterval()</code>,<code>eval()</code>这种函数，本来就是将字符串当js代码执行的，所以可以截断。如果想让<code>value</code>的值被当做文本字符解析，在这个环境下需要进行两次js编码，也就是在<code>setTimeout()</code>函数中依旧是编码后的<code>value</code>，这样在<code>setTimeout</code>执行时会将它当做文本字符，当然了，如果<code>setTimeout()</code>还有类似的函数，那么两次编码还是挡不住的~（这里有点绕）</p>
 <h1 id="再说点废话"><a href="#再说点废话" class="headerlink" title="再说点废话"></a>再说点废话</h1><p>&emsp;&emsp;想要挖的一手好XSS，需要对浏览器还有JavaScript有比较深的理解，所以还是要啃一些比较难懂的东西的~<br>&emsp;&emsp;今天只需要比昨天变强一点点就行了。慢慢沉淀。慢慢积累。</p>
 <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><blockquote>
-<p><a href="https://security.yirendai.com/news/share/26" target="_blank" rel="external">https://security.yirendai.com/news/share/26</a><br><a href="http://xuelinf.github.io/2016/05/18/%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/" target="_blank" rel="external">http://xuelinf.github.io/2016/05/18/%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/</a></p>
+<p><a href="https://security.yirendai.com/news/share/26" target="_blank" rel="noopener">https://security.yirendai.com/news/share/26</a><br><a href="http://xuelinf.github.io/2016/05/18/%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/" target="_blank" rel="noopener">http://xuelinf.github.io/2016/05/18/%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/</a></p>
 </blockquote>
 </section>
     <!-- Tags START -->
@@ -163,11 +163,11 @@
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#JavaScript" >
+  <a href="/tags#JavaScript">
     <span class="tag-code">JavaScript</span>
   </a>
 
-  <a href="/tags#Browser" >
+  <a href="/tags#Browser">
     <span class="tag-code">Browser</span>
   </a>
 

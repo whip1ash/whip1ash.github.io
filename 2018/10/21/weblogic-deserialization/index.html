@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <head>
+  <head><meta name="generator" content="Hexo 3.8.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   <meta name="description" content="whip1ash&#39;s blog">
   <meta name="keyword" content="hexo-theme, vuejs">
-  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI" />
-  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI" />
+  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI">
+  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
   
@@ -27,7 +27,7 @@
 <script src="/js/gitment.js"></script>
 </head>
 <div class="wechat-share">
-  <img src="/css/images/logo.png" />
+  <img src="/css/images/logo.png">
 </div>
 
   <body>
@@ -164,22 +164,22 @@
 <h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>其实并不是只有CoordinatorPortType这一个接口可以打，从wls-wsat.wra/web.xml中可以看出其中又八个接口，都是使用同一个包(weblogic.wsee.wstx)处理，所以以下八个接口均可以利用。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/wls-wsat/CoordinatorPortType</span><br><span class="line">/wls-wsat/RegistrationPortTypeRPC</span><br><span class="line">/wls-wsat/ParticipantPortType</span><br><span class="line">/wls-wsat/RegistrationRequesterPortType</span><br><span class="line">/wls-wsat/CoordinatorPortType11</span><br><span class="line">/wls-wsat/RegistrationPortTypeRPC11</span><br><span class="line">/wls-wsat/ParticipantPortType11</span><br><span class="line">/wls-wsat/RegistrationRequesterPortType11</span><br></pre></td></tr></table></figure>
 <h1 id="说点废话"><a href="#说点废话" class="headerlink" title="说点废话"></a>说点废话</h1><p>这个漏洞调下来，感觉摸到java反序列化的大门了，管中窥豹，知其一二。<br>下篇学习一下Java反序列化的具体利用。<br>疑问：如何定位到WLSServletAdapter.class的handle???求大佬们指点迷津</p>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://www.anquanke.com/post/id/102768#h2-5" target="_blank" rel="external">https://www.anquanke.com/post/id/102768#h2-5</a><br><a href="https://zhuanlan.zhihu.com/p/32301092" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/32301092</a><br><a href="http://pirogue.org/2017/12/29/weblogic-XMLDecoder/" target="_blank" rel="external">http://pirogue.org/2017/12/29/weblogic-XMLDecoder/</a><br><a href="http://xxlegend.com/2017/12/22/Weblogic%20CVE-2017-10271%20XMLDecoder%20RCE%E5%88%86%E6%9E%90/" target="_blank" rel="external">http://xxlegend.com/2017/12/22/Weblogic%20CVE-2017-10271%20XMLDecoder%20RCE%E5%88%86%E6%9E%90/</a></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://www.anquanke.com/post/id/102768#h2-5" target="_blank" rel="noopener">https://www.anquanke.com/post/id/102768#h2-5</a><br><a href="https://zhuanlan.zhihu.com/p/32301092" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/32301092</a><br><a href="http://pirogue.org/2017/12/29/weblogic-XMLDecoder/" target="_blank" rel="noopener">http://pirogue.org/2017/12/29/weblogic-XMLDecoder/</a><br><a href="http://xxlegend.com/2017/12/22/Weblogic%20CVE-2017-10271%20XMLDecoder%20RCE%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">http://xxlegend.com/2017/12/22/Weblogic%20CVE-2017-10271%20XMLDecoder%20RCE%E5%88%86%E6%9E%90/</a></p>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#Java" >
+  <a href="/tags#Java">
     <span class="tag-code">Java</span>
   </a>
 
-  <a href="/tags#Deserialization" >
+  <a href="/tags#Deserialization">
     <span class="tag-code">Deserialization</span>
   </a>
 
-  <a href="/tags#WebLogic" >
+  <a href="/tags#WebLogic">
     <span class="tag-code">WebLogic</span>
   </a>
 
@@ -208,7 +208,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CVE-2017-3506-amp-CVE-2017-10271"><span class="toc-nav-text">CVE-2017-3506 & CVE-2017-10271</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#环境搭建"><span class="toc-nav-text">环境搭建</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#动态调试"><span class="toc-nav-text">动态调试</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-wsee-jaxws-workcontext-WorkContextServerTube"><span class="toc-nav-text">weblogic.wsee.jaxws.workcontext.WorkContextServerTube</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-wsee-jaxws-workcontext-WorkContextTube"><span class="toc-nav-text">weblogic.wsee.jaxws.workcontext.WorkContextTube</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-wsee-jaxws-workcontext-WorkContextServerTube-1"><span class="toc-nav-text">weblogic.wsee.jaxws.workcontext.WorkContextServerTube</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-workarea-WorkContextMapImpl"><span class="toc-nav-text">weblogic.workarea.WorkContextMapImpl</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-workarea-WorkContextLocalMap"><span class="toc-nav-text">weblogic.workarea.WorkContextLocalMap</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-workarea-spi-WorkContextEntryImpl"><span class="toc-nav-text">weblogic.workarea.spi.WorkContextEntryImpl</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#漏洞原因-amp-补丁分析"><span class="toc-nav-text">漏洞原因&补丁分析</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Exploit"><span class="toc-nav-text">Exploit</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#补充"><span class="toc-nav-text">补充</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#说点废话"><span class="toc-nav-text">说点废话</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-text">Reference</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CVE-2017-3506-amp-CVE-2017-10271"><span class="toc-nav-text">CVE-2017-3506 &amp; CVE-2017-10271</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#环境搭建"><span class="toc-nav-text">环境搭建</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#动态调试"><span class="toc-nav-text">动态调试</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-wsee-jaxws-workcontext-WorkContextServerTube"><span class="toc-nav-text">weblogic.wsee.jaxws.workcontext.WorkContextServerTube</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-wsee-jaxws-workcontext-WorkContextTube"><span class="toc-nav-text">weblogic.wsee.jaxws.workcontext.WorkContextTube</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-wsee-jaxws-workcontext-WorkContextServerTube-1"><span class="toc-nav-text">weblogic.wsee.jaxws.workcontext.WorkContextServerTube</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-workarea-WorkContextMapImpl"><span class="toc-nav-text">weblogic.workarea.WorkContextMapImpl</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-workarea-WorkContextLocalMap"><span class="toc-nav-text">weblogic.workarea.WorkContextLocalMap</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#weblogic-workarea-spi-WorkContextEntryImpl"><span class="toc-nav-text">weblogic.workarea.spi.WorkContextEntryImpl</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#漏洞原因-amp-补丁分析"><span class="toc-nav-text">漏洞原因&amp;补丁分析</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Exploit"><span class="toc-nav-text">Exploit</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#补充"><span class="toc-nav-text">补充</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#说点废话"><span class="toc-nav-text">说点废话</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-text">Reference</span></a></li></ol>
     
   </div>
 </aside>

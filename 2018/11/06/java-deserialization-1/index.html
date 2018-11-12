@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <head>
+  <head><meta name="generator" content="Hexo 3.8.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   <meta name="description" content="whip1ash&#39;s blog">
   <meta name="keyword" content="hexo-theme, vuejs">
-  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI" />
-  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI" />
+  <meta name="google-site-verification" content="Jn3GoSbAsK1naf6utvvBn1NniTRbPspDlWKN6rjfHNI">
+  <meta name="google-site-verification" content="U05PlKKB3jyiKQ6gkPfsh9R5SUeWyo4Lml44hId45VI">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
   
@@ -27,7 +27,7 @@
 <script src="/js/gitment.js"></script>
 </head>
 <div class="wechat-share">
-  <img src="/css/images/logo.png" />
+  <img src="/css/images/logo.png">
 </div>
 
   <body>
@@ -123,9 +123,9 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="从一篇文章再探Java反序列化-Binary-从0开始学习Java反序列化-2"><a href="#从一篇文章再探Java反序列化-Binary-从0开始学习Java反序列化-2" class="headerlink" title="从一篇文章再探Java反序列化(Binary) - 从0开始学习Java反序列化 (2)"></a>从一篇文章再探Java反序列化(Binary) - 从0开始学习Java反序列化 (2)</h1><h2 id="0x00-Intro"><a href="#0x00-Intro" class="headerlink" title="0x00 Intro"></a>0x00 Intro</h2><p>上一次走马观花的复现了CVE-2017-3506 &amp; CVE-2017-10271，也算是摸到了Java反序列化的大门，这次恰好有看到了一篇Java反序列的文章 - <a href="https://medium.com/abn-amro-red-team/java-deserialization-from-discovery-to-reverse-shell-on-limited-environments-2e7b4e14fbef" target="_blank" rel="external">Java Deserialization — From Discovery to Reverse Shell on Limited Environments</a>。并不能说是一篇好文章，基本可以说是题文不符了，但是其中还是涵盖了一些可以深入学习的方向。最近有深入学习Java的打算，正好就借此为题。</p>
+    <section class="markdown-content"><h1 id="从一篇文章再探Java反序列化-Binary-从0开始学习Java反序列化-2"><a href="#从一篇文章再探Java反序列化-Binary-从0开始学习Java反序列化-2" class="headerlink" title="从一篇文章再探Java反序列化(Binary) - 从0开始学习Java反序列化 (2)"></a>从一篇文章再探Java反序列化(Binary) - 从0开始学习Java反序列化 (2)</h1><h2 id="0x00-Intro"><a href="#0x00-Intro" class="headerlink" title="0x00 Intro"></a>0x00 Intro</h2><p>上一次走马观花的复现了CVE-2017-3506 &amp; CVE-2017-10271，也算是摸到了Java反序列化的大门，这次恰好有看到了一篇Java反序列的文章 - <a href="https://medium.com/abn-amro-red-team/java-deserialization-from-discovery-to-reverse-shell-on-limited-environments-2e7b4e14fbef" target="_blank" rel="noopener">Java Deserialization — From Discovery to Reverse Shell on Limited Environments</a>。并不能说是一篇好文章，基本可以说是题文不符了，但是其中还是涵盖了一些可以深入学习的方向。最近有深入学习Java的打算，正好就借此为题。</p>
 <h2 id="0x01-从文章中寻找学习的方向"><a href="#0x01-从文章中寻找学习的方向" class="headerlink" title="0x01 从文章中寻找学习的方向"></a>0x01 从文章中寻找学习的方向</h2><p>在文章中我看到了以下三个点：<br><img src="/media/15415170178894.jpg" alt=""></p>
-<p>既然是从WebGoat8开始，那就下载下来看看~ (<a href="https://github.com/WebGoat/WebGoat" target="_blank" rel="external">github</a>)，直接<code>java -jar webgoat-server-8.0.0.VERSION.jar --server.port=8080</code>就可以跑起来。对照文章所讲的反序列化的练习，可以找到这个路径。<br><code>/WebGoat-8.0.0.M21/webgoat-lessons/insecure-deserialization/src/main/java/org/owasp/webgoat/plugin/InsecureDeserializationTask.java</code><br>代码很简单，接收数据解base64，然后直接进行readObject。<br><img src="/media/15415174354945.jpg" alt=""></p>
+<p>既然是从WebGoat8开始，那就下载下来看看~ (<a href="https://github.com/WebGoat/WebGoat" target="_blank" rel="noopener">github</a>)，直接<code>java -jar webgoat-server-8.0.0.VERSION.jar --server.port=8080</code>就可以跑起来。对照文章所讲的反序列化的练习，可以找到这个路径。<br><code>/WebGoat-8.0.0.M21/webgoat-lessons/insecure-deserialization/src/main/java/org/owasp/webgoat/plugin/InsecureDeserializationTask.java</code><br>代码很简单，接收数据解base64，然后直接进行readObject。<br><img src="/media/15415174354945.jpg" alt=""></p>
 <p>既然源码这么简单，直接readObject()。回想起来以前看过反序列化最简单的Demo，好像跟这个差不多。那我们为什么不尝试构造一下poc呢，而不是用ysoserial自动化构造。<br>get！第一个目标是不用文章的方法尝试构造poc。</p>
 <h2 id="0x02-尝试构造POC"><a href="#0x02-尝试构造POC" class="headerlink" title="0x02 尝试构造POC"></a>0x02 尝试构造POC</h2><p>于是本人天真的构造了如下POC:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Exploit</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        poc e = <span class="keyword">new</span> poc();</span><br><span class="line">        </span><br><span class="line">        FileOutputStream fos=<span class="keyword">new</span> FileOutputStream(<span class="string">"ser"</span>);</span><br><span class="line">        ObjectOutputStream objOut = <span class="keyword">new</span> ObjectOutputStream(fos);</span><br><span class="line">        objOut.writeObject(e);</span><br><span class="line">        objOut.close();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">poc</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//重写readObject()方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(java.io.ObjectInputStream in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException</span>&#123;</span><br><span class="line">        <span class="comment">//执行默认的readObject()方法</span></span><br><span class="line">        in.defaultReadObject();</span><br><span class="line">        <span class="comment">//执行打开计算器程序命令</span></span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">"open /Applications/Calculator.app/"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -135,7 +135,7 @@
 <blockquote>
 <p>序列化 (Serialization)将对象的状态信息转换为可以存储或传输的形式的过程。在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或反序列化对象的状态，重新创建该对象。</p>
 </blockquote>
-<p>所以序列化并不仅仅局限于各个语言的序列化，比如Java/PHP/Python…..在现代业务场景中，为了解耦，序列化有可能是跨语言甚至跨平台的。为了实现这样的功能，不同的序列化协议就应运而生了。其实序列化协议简单的分为可读和不可读两种，可读的包括我们熟悉的Json，XML，不可读的就是单纯的二进制序列。所以在这里我们使用的是原生的Java序列化协议。在原生的Java序列化协议中 AC ED 是STREAM_MAGIC，两个字节声明使用了序列化协议，00 05 是STREAM_VERSION，声明了序列化版本。这些常量在java的源码中是有定义的(/jdk1.8.0_131.jdk/Contents/Home/src.zip!/java/io/ObjectStreamConstants.java)。详细可以查看下面这篇文章。<br><a href="https://www.javaworld.com/article/2072752/the-java-serialization-algorithm-revealed.html" target="_blank" rel="external">The Java serialization algorithm revealed</a><br>有一个读取序列化数据各个字段的工具<br><a href="https://github.com/NickstaDB/SerializationDumper" target="_blank" rel="external">https://github.com/NickstaDB/SerializationDumper</a></p>
+<p>所以序列化并不仅仅局限于各个语言的序列化，比如Java/PHP/Python…..在现代业务场景中，为了解耦，序列化有可能是跨语言甚至跨平台的。为了实现这样的功能，不同的序列化协议就应运而生了。其实序列化协议简单的分为可读和不可读两种，可读的包括我们熟悉的Json，XML，不可读的就是单纯的二进制序列。所以在这里我们使用的是原生的Java序列化协议。在原生的Java序列化协议中 AC ED 是STREAM_MAGIC，两个字节声明使用了序列化协议，00 05 是STREAM_VERSION，声明了序列化版本。这些常量在java的源码中是有定义的(/jdk1.8.0_131.jdk/Contents/Home/src.zip!/java/io/ObjectStreamConstants.java)。详细可以查看下面这篇文章。<br><a href="https://www.javaworld.com/article/2072752/the-java-serialization-algorithm-revealed.html" target="_blank" rel="noopener">The Java serialization algorithm revealed</a><br>有一个读取序列化数据各个字段的工具<br><a href="https://github.com/NickstaDB/SerializationDumper" target="_blank" rel="noopener">https://github.com/NickstaDB/SerializationDumper</a></p>
 <p>常见序列化协议的特征码目前还没有找到太多的资料，这里留个坑，见到了再更。</p>
 <p>通过了解序列化协议，就可以知道我们无法反序列化一个不存在的类，只能通过构造二进制序列来一步步的调用已经存在的类，从而找到一个可以利用的点来执行我们的代码，比如能够反射调用任意函数的点，也就是构造POP链。</p>
 <blockquote>
@@ -162,11 +162,11 @@
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#Java" >
+  <a href="/tags#Java">
     <span class="tag-code">Java</span>
   </a>
 
-  <a href="/tags#Deserialization" >
+  <a href="/tags#Deserialization">
     <span class="tag-code">Deserialization</span>
   </a>
 
